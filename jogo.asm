@@ -2,7 +2,7 @@
 .stack 100H
 
 .data
-    logo:   db '', 13, 10
+    logo    db '', 13, 10
             db ' _  __      ____  _____  ____  ____ ', 13, 10
             db '/ |/ /     / ___\/__ __\/  _ \/  __\ ', 13, 10
             db '|   /_____ |    \  / \  | / \||  \/| ', 13, 10
@@ -12,7 +12,7 @@
             
     logo_length EQU $ - logo
 
-    menuJogar:   db '', 13, 10
+    menuJogar    db '', 13, 10
                 db '', 13, 10
                 db '', 13, 10
                 db '                ', 218, 196, 196, 196, 196, 196, 196, 191, 13, 10     
@@ -21,7 +21,7 @@
 
     menuJogar_length EQU $ - menuJogar
     
-    menuSair:    db '', 13, 10
+    menuSair     db '', 13, 10
                 db '                ', 218, 196, 196, 196, 196, 196, 196, 191, 13, 10     
                 db '                ', 221, ' Sair ', 221, 13, 10
                 db '                ', 192, 196, 196, 196, 196, 196, 196, 217, 13, 10
@@ -103,13 +103,13 @@ pres:
     ; logica para tecla pressionada 
 
 npres:
-    ; para não pressionada   
+    ; para n?o pressionada   
     
     ; estou pensando em so retornar ou nao temos que ver
 verificaTecla ENDP
 
 inicio:
-    mov AX, @DATA
+    mov AX, @data
     mov DS, AX
     mov es, AX
     call video
