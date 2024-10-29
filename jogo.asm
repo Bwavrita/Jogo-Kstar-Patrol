@@ -62,9 +62,54 @@
 
     setor3_length EQU $ - setor_3
 
-              
+    flag_nave db 0
+    
+    nave    db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+            db 0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+            db 1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+            db 1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+            db 0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0
+            db 0,0,1,1,1,1,0,0,0,0,1,1,1,1,1,0,0,0,0,0
+            db 0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0
+            db 1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+            db 1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+            db 0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0  
+     
+     nave_contrario                 db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+                                    db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0
+                                    db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1
+                                    db 0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1
+                                    db 0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0
+                                    db 0,0,0,0,0,1,1,1,1,1,0,0,0,0,1,1,1,1,0,0
+                                    db 0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0
+                                    db 0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1
+                                    db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1
+                                    db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0
+     cor db 1
+     
+     ;xnave1 db 80
+
+     ;xnave2 db 90
+     ;
+    
     
 .code
+
+suspende PROC
+    push CX
+    push AX
+    push DX
+    
+    mov CX,0FH
+    mov DX, 0FFFFh
+    mov AH,86h
+    int 15h
+    
+    pop DX
+    pop AX
+    pop CX
+    ret
+suspende ENDP
 
 print_string PROC
     push AX
@@ -110,6 +155,53 @@ video PROC
     ret
 video ENDP
 
+print_nave proc
+    push ds
+    push cx
+    push ax
+    push di
+    push es
+
+    mov cx, 320
+    mul cx          ; implicitamente multiplica por ax 
+    mov di,ax   
+    add di, bx
+    
+    mov ax, 0A000h
+    mov es, ax
+    
+    mov bl, 10
+    laco_desenha_objeto:
+        mov cx, 20
+        laco_troca_cor:
+             mov al,[si]
+             cmp al,0
+             je desativado
+             mov al,cor
+             mov [si],al
+         desativado:
+             movsb
+             dec cx
+             jnz laco_troca_cor
+        add di, 300 ;3520,3820,4120,
+        dec bl
+        jz fim_desenha_objeto
+        jmp laco_desenha_objeto
+    
+    fim_desenha_objeto:
+        pop es
+        pop di
+        pop ax
+        pop cx
+        pop ds
+        ret
+print_nave endp
+
+move_baixo PROC
+    dec ax
+    call print_nave
+    ret
+move_baixo ENDP
 
 imprime_botoes PROC
     push CX
@@ -122,7 +214,7 @@ imprime_botoes PROC
     xor CX, CX
     xor DX, DX
 
-    mov AL, [flag_menu]         ; Carrega a flag em AL
+    mov AL, [flag_menu]    ; Carrega a flag em AL
     test AL, AL            ; Testa se a flag ? 0 ou 1
     jnz ATIVADO            ; Se a flag for 1, vai para ATIVADO
 
@@ -131,14 +223,14 @@ DESATIVADO: ;JOGAR SELECIONADO
     mov CX, menuJogar_length ; tamanho
     mov BL, 0CH ; cor
     mov DL, 2 ;coluna
-    mov DH, 10 ; linha 
+    mov DH, 15 ; linha 
     call print_string
     
     mov BP, OFFSET menuSair
     mov CX, menuSair_length ; tamanho
     mov BL, 0FH ; cor
     mov DL, 2 ;coluna
-    mov DH, 15 ; linha
+    mov DH, 20 ; linha
     call print_string
     jmp FINAL
 
@@ -147,14 +239,14 @@ ATIVADO:;SAIR SELECIONADO
     mov CX, menuJogar_length ; tamanho
     mov BL, 0FH ; cor
     mov DL, 2 ;coluna
-    mov DH, 10 ; linha 
+    mov DH, 15 ; linha 
     call print_string
     
     mov BP, OFFSET menuSair
     mov CX, menuSair_length ; tamanho
     mov BL, 0CH ; cor
     mov DL, 2 ;coluna
-    mov DH, 15 ; linha
+    mov DH, 20 ; linha
     call print_string
     jmp FINAL
 
@@ -259,14 +351,26 @@ print_logo_inicial PROC
     
     call imprime_botoes
     
+    mov cor,5
+    mov si, OFFSET nave
+    mov ax,80
+    mov bx,10
+    call print_nave
+    
+    mov cor,7
+    mov si, OFFSET nave_contrario
+    mov ax,90
+    mov bx,290
+    call print_nave
+    
 LACO_TECLA:
     call verifica_tecla
-    cmp AL ,18H
+    cmp AL ,48H
     je TROCAR_COR
-    cmp AL, 19H
+    cmp AL, 50H
     je TROCAR_COR
     cmp AL, 73H ;W OU S
-    je TROCAR_COR
+    je LACO_NAVE;TROCAR_COR
     cmp AL, 77H ; W OU S
     je TROCAR_COR
     cmp AL, 0DH ; enter
@@ -275,6 +379,19 @@ LACO_TECLA:
     je SELECT
     jmp LACO_TECLA
     
+LACO_NAVE:
+    call suspende ; tem que suspender e mover a nave pro lado
+    mov cor,5
+    mov si, OFFSET nave
+    mov ax,80
+    mov bx,20
+    call print_nave
+    
+    mov cor,7
+    mov si, OFFSET nave_contrario
+    mov ax,90
+    mov bx,280
+    call print_nave
     
 TROCAR_COR:
     xor [flag_menu], 1          ; Inverte a flag: 0 -> 1 ou 1 -> 0
@@ -314,6 +431,7 @@ inicio:
     call video
     call print_logo_inicial
     call troca_menu
+
     mov AH, 4CH
     int 21h
     
