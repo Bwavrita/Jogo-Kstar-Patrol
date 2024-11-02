@@ -61,8 +61,6 @@
                    db '                                        ', 13, 10
 
     setor3_length EQU $ - setor_3
-
-    flag_nave db 0
     
     nave    db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
             db 0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -75,24 +73,21 @@
             db 1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
             db 0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0  
      
-     nave_contrario                 db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-                                    db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0
-                                    db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1
-                                    db 0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1
-                                    db 0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0
-                                    db 0,0,0,0,0,1,1,1,1,1,0,0,0,0,1,1,1,1,0,0
-                                    db 0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0
-                                    db 0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1
-                                    db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1
-                                    db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0
+    nave_contrario      db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+                        db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0
+                        db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1
+                        db 0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1
+                        db 0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0
+                        db 0,0,0,0,0,1,1,1,1,1,0,0,0,0,1,1,1,1,0,0
+                        db 0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0
+                        db 0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1
+                        db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1
+                        db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0
      cor db 1
      
-     ;xnave1 db 80
-
-     ;xnave2 db 90
-     ;
-    
-    
+     naveY dw 80
+     naveX dw 10
+        
 .code
 
 suspende PROC
@@ -183,7 +178,7 @@ print_nave proc
              movsb
              dec cx
              jnz laco_troca_cor
-        add di, 300 ;3520,3820,4120,
+        add di, 300
         dec bl
         jz fim_desenha_objeto
         jmp laco_desenha_objeto
@@ -198,10 +193,76 @@ print_nave proc
 print_nave endp
 
 move_baixo PROC
-    dec ax
-    call print_nave
-    ret
+
+    mov AX, [naveY]
+    mov BX, [naveX]
+    mov CX, 640
+
+    mul CX
+    add AX, BX
+    mov SI, AX
+    mov DI, SI
+    sub DI, 320
+
+    mov AX, 0A000h
+    mov ES, AX
+
+    mov BL, 11
+
+LACO_BAIXO:
+    mov CX, 20
+    add SI, CX
+    add DI, CX
+
+LACO_MOVER:
+    movsb
+    dec SI
+    dec DI
+    loop LACO_MOVER
+
+    add SI, 320
+    add DI, 320
+    dec BL
+    jnz LACO_BAIXO
+
 move_baixo ENDP
+
+move_cima PROC
+            mov AX, [naveY]
+    mov BX, [naveX]
+    mov CX, 640
+
+    mul CX
+    add AX, BX
+    mov SI, AX
+    mov DI, SI
+    add DI, 320
+
+    mov AX, 0A000h
+    mov ES, AX
+
+    mov BL, 11
+
+LACO_CIMA:
+    mov CX, 20
+    add SI, CX
+    add DI, CX
+
+LACO_MOVE:
+    movsb
+    dec SI
+    dec DI
+    loop LACO_MOVE
+
+    sub SI, 320
+    sub DI, 320
+    dec BL
+    jnz LACO_cima
+move_cima ENDP
+    
+move_lado PROC
+    
+move_lado ENDP
 
 imprime_botoes PROC
     push CX
@@ -370,7 +431,7 @@ LACO_TECLA:
     cmp AL, 50H
     je TROCAR_COR
     cmp AL, 73H ;W OU S
-    je LACO_NAVE;TROCAR_COR
+    je TROCAR_COR;TROCAR_COR
     cmp AL, 77H ; W OU S
     je TROCAR_COR
     cmp AL, 0DH ; enter
@@ -378,24 +439,12 @@ LACO_TECLA:
     cmp AL, 20h ; spaco
     je SELECT
     jmp LACO_TECLA
-    
-LACO_NAVE:
-    call suspende ; tem que suspender e mover a nave pro lado
-    mov cor,5
-    mov si, OFFSET nave
-    mov ax,80
-    mov bx,20
-    call print_nave
-    
-    mov cor,7
-    mov si, OFFSET nave_contrario
-    mov ax,90
-    mov bx,280
-    call print_nave
+
     
 TROCAR_COR:
     xor [flag_menu], 1          ; Inverte a flag: 0 -> 1 ou 1 -> 0
     call imprime_botoes
+    call move_baixo
     jmp LACO_TECLA
 SELECT:
     xor AX,AX
