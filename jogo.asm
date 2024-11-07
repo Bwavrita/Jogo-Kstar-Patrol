@@ -95,7 +95,7 @@ suspende PROC
     push AX
     push DX
     
-    mov CX,0FH
+    mov CX, 0FH
     mov DX, 0FFFFh
     mov AH,86h
     int 15h
@@ -119,7 +119,7 @@ print_string PROC
     xor BH, BH
     int 10h
 
-    pop DI
+    pop Bp
     pop SI
     pop DX
     pop CX
@@ -193,76 +193,106 @@ print_nave proc
 print_nave endp
 
 move_baixo PROC
-
-    mov AX, [naveY]
-    mov BX, [naveX]
-    mov CX, 640
+    push AX
+    push BX
+    push CX
+    push SI
+    push DI
+    
+    xor AX,AX
+    xor BX,BX
+    xor CX,CX
+    xor SI,SI
+    xor DI,DI
+    
+    STD
+    mov AX, 80 ;[naveX]
+    mov BX, 10 ;[naveY]
+    mov cx, 320
 
     mul CX
     add AX, BX
     mov SI, AX
     mov DI, SI
-    sub DI, 320
+
+    add DI, 1600 ; 5 LINhAS
 
     mov AX, 0A000h
     mov ES, AX
+    mov DS,AX
 
-    mov BL, 11
+    mov BL, 10
 
 LACO_BAIXO:
     mov CX, 20
-    add SI, CX
-    add DI, CX
 
 LACO_MOVER:
     movsb
-    dec SI
-    dec DI
     loop LACO_MOVER
 
     add SI, 320
     add DI, 320
     dec BL
     jnz LACO_BAIXO
-
+    
+    pop DI
+    pop SI
+    pop CX
+    pop BX
+    pop AX
+    ret
 move_baixo ENDP
 
 move_cima PROC
-            mov AX, [naveY]
-    mov BX, [naveX]
-    mov CX, 640
+    push AX
+    push BX
+    push CX
+    push SI
+    push DI
 
+    xor AX,AX
+    xor BX,BX
+    xor CX,CX
+    xor SI,SI
+    xor DI,DI
+    cld
+    mov AX, [naveY]
+    mov BX, [naveX]
+    mov CX, 320
+    
     mul CX
     add AX, BX
     mov SI, AX
     mov DI, SI
-    add DI, 320
+
+    ; Subtrair 5 linhas (5 * 320 = 1600) para mover para cima
+    sub DI, 1600
 
     mov AX, 0A000h
     mov ES, AX
 
-    mov BL, 11
-
+    mov BL, 10
+    
 LACO_CIMA:
     mov CX, 20
-    add SI, CX
-    add DI, CX
 
 LACO_MOVE:
     movsb
-    dec SI
-    dec DI
     loop LACO_MOVE
 
     sub SI, 320
     sub DI, 320
     dec BL
-    jnz LACO_cima
+    jnz LACO_CIMA
+    
+    
+    pop DI
+    pop SI
+    pop CX
+    pop BX
+    pop AX
+    ret
 move_cima ENDP
-    
-move_lado PROC
-    
-move_lado ENDP
 
 imprime_botoes PROC
     push CX
@@ -444,7 +474,6 @@ LACO_TECLA:
 TROCAR_COR:
     xor [flag_menu], 1          ; Inverte a flag: 0 -> 1 ou 1 -> 0
     call imprime_botoes
-    call move_baixo
     jmp LACO_TECLA
 SELECT:
     xor AX,AX
@@ -478,8 +507,15 @@ inicio:
     mov DS, AX
     mov es, AX
     call video
-    call print_logo_inicial
-    call troca_menu
+    ;call print_logo_inicial
+    ;call troca_menu
+    mov cor,5
+    mov si, OFFSET nave
+    mov ax,80; y
+    mov bx,10 ; x
+    call print_nave
+    call suspende
+    call move_baixo
 
     mov AH, 4CH
     int 21h
