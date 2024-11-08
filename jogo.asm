@@ -205,33 +205,32 @@ move_baixo PROC
     xor SI,SI
     xor DI,DI
     
-    STD
-    mov AX, 80 ;[naveX]
-    mov BX, 10 ;[naveY]
+    CLD ; cld esquerda -> direita, std direita -> esquerda
+    mov AX, 80 ; linha
+    add AX, 20 ; linha do final da nave
+    mov BX, 10 ; coluna de posicao
     mov cx, 320
 
-    mul CX
-    add AX, BX
-    mov SI, AX
-    mov DI, SI
+    mul CX ; 100 * 320
+    add AX, BX ;32000
+    mov SI, AX ; SI -> 32010
+    mov DI, SI ; DI -> 32010
 
-    add DI, 1600 ; 5 LINhAS
+    add DI, 300 ; 32310
 
     mov AX, 0A000h
-    mov ES, AX
-    mov DS,AX
+    mov ES, AX ; es -> A000H
+    mov DS, AX ; DS -> A000H
 
-    mov BL, 10
+    mov BL, 10 ; BL TEM 10 POIS TEM A ALTURA DA NAVE 
 
 LACO_BAIXO:
-    mov CX, 20
+    mov CX, 20 ; CX RECEBE 20 POIS ? O COMPRIMENTO DO DA NAVE
+    rep movsb
 
-LACO_MOVER:
-    movsb
-    loop LACO_MOVER
 
-    add SI, 320
-    add DI, 320
+    sub SI, 300
+    sub DI, 300
     dec BL
     jnz LACO_BAIXO
     
