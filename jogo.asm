@@ -215,7 +215,7 @@ move_baixo PROC
     mov SI, AX ; SI -> 32010
     mov DI, SI ; DI -> 32010
     add SI, 2880
-    add DI, 16000 ; 32310
+    add DI, 3200 ; 32310
 
     mov AX, 0A000h
     mov ES, AX ; es -> A000H
@@ -228,8 +228,8 @@ LACO_BAIXO:
     rep movsb
 
 
-    SUB SI, 300
-    SUB DI, 300
+    SUB SI, 340
+    SUB DI, 340
     dec BL
     jnz LACO_BAIXO
     
@@ -512,8 +512,11 @@ inicio:
     mov ax,80; y
     mov bx,10 ; x
     call print_nave
+    mov cx,20
+laco3:
     call suspende
     call move_baixo
+    loop laco3
 
     mov AH, 4CH
     int 21h
