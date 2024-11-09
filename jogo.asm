@@ -207,16 +207,15 @@ move_baixo PROC
     
     CLD ; cld esquerda -> direita, std direita -> esquerda
     mov AX, 80 ; linha
-    add AX, 20 ; linha do final da nave
     mov BX, 10 ; coluna de posicao
     mov cx, 320
 
     mul CX ; 100 * 320
-    add AX, BX ;32000
+    add AX, BX ;32010
     mov SI, AX ; SI -> 32010
     mov DI, SI ; DI -> 32010
-
-    add DI, 300 ; 32310
+    add SI, 2880
+    add DI, 16000 ; 32310
 
     mov AX, 0A000h
     mov ES, AX ; es -> A000H
@@ -229,8 +228,8 @@ LACO_BAIXO:
     rep movsb
 
 
-    sub SI, 300
-    sub DI, 300
+    SUB SI, 300
+    SUB DI, 300
     dec BL
     jnz LACO_BAIXO
     
