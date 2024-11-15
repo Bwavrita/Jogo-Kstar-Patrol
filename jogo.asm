@@ -71,7 +71,9 @@
             db 0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0
             db 1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0
             db 1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-            db 0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0  
+            db 0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 
+            db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+     
      
     nave_contrario      db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
                         db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0
@@ -83,10 +85,20 @@
                         db 0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1
                         db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1
                         db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0
+                        db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
      cor db 1
      
      naveY dw 80
      naveX dw 10
+     alturaNave dw 11
+     comprimentoNave dw 20
+     flag_move db 0 ; 0 -> cima , 1 -> baixo, 2 -> esquerda , 3-> direita , 4 -> diagonal cima , 5 -> diagnoal baixo
+     ;segundos db '00',13,10
+     ;segundos_length EQU $ - segundos
+     nave_inicial1x dw 10
+     nave_inicial2x dw 290
+     alienX db 0
+     alienY db 0
         
 .code
 
@@ -94,8 +106,7 @@ suspende PROC
     push CX
     push AX
     push DX
-    
-    mov CX, 0FH
+    xor CX,CXW
     mov DX, 0FFFFh
     mov AH,86h
     int 15h
@@ -134,7 +145,6 @@ verifica_tecla PROC
     ; ZF = 1 tecla pressionada e no buffer , ZF = 0 tecla n pressionada
 
     xor AL,AL ;deixa como padr?o o NULL caso n?o tenha pressionado nada
-
     mov AH, 00h
     int 16h
     ;tecla em al
@@ -158,14 +168,14 @@ print_nave proc
     push es
 
     mov cx, 320
-    mul cx          ; implicitamente multiplica por ax 
+    mul cx 
     mov di,ax   
     add di, bx
     
     mov ax, 0A000h
     mov es, ax
     
-    mov bl, 10
+    mov bl, 11
     laco_desenha_objeto:
         mov cx, 20
         laco_troca_cor:
@@ -192,105 +202,167 @@ print_nave proc
         ret
 print_nave endp
 
-move_baixo PROC
+mover PROC;recebe como parametro  Ax -> y , BX -> x 
     push AX
     push BX
     push CX
     push SI
     push DI
     
-    xor AX,AX
-    xor BX,BX
-    xor CX,CX
-    xor SI,SI
-    xor DI,DI
-    
-    CLD ; cld esquerda -> direita, std direita -> esquerda
-    mov AX, 80 ; linha
-    mov BX, 10 ; coluna de posicao
     mov cx, 320
 
-    mul CX ; 100 * 320
-    add AX, BX ;32010
-    mov SI, AX ; SI -> 32010
-    mov DI, SI ; DI -> 32010
-    add SI, 2880
-    add DI, 3200 ; 32310
-
-    mov AX, 0A000h
-    mov ES, AX ; es -> A000H
-    mov DS, AX ; DS -> A000H
-
-    mov BL, 10 ; BL TEM 10 POIS TEM A ALTURA DA NAVE 
-
-LACO_BAIXO:
-    mov CX, 20 ; CX RECEBE 20 POIS ? O COMPRIMENTO DO DA NAVE
-    rep movsb
-
-
-    SUB SI, 340
-    SUB DI, 340
-    dec BL
-    jnz LACO_BAIXO
-    
-    pop DI
-    pop SI
-    pop CX
-    pop BX
-    pop AX
-    ret
-move_baixo ENDP
-
-move_cima PROC
-    push AX
-    push BX
-    push CX
-    push SI
-    push DI
-
-    xor AX,AX
-    xor BX,BX
-    xor CX,CX
-    xor SI,SI
-    xor DI,DI
-    cld
-    mov AX, [naveY]
-    mov BX, [naveX]
-    mov CX, 320
-    
     mul CX
     add AX, BX
     mov SI, AX
     mov DI, SI
-
-    ; Subtrair 5 linhas (5 * 320 = 1600) para mover para cima
-    sub DI, 1600
-
+    CLD
+    xor AX,AX
+    mov AL, [flag_move]
+    push AX
+    
     mov AX, 0A000h
     mov ES, AX
-
-    mov BL, 10
+    mov DS, Ax
     
-LACO_CIMA:
-    mov CX, 20
+    mov BL, 11
+    pop AX
+    cmp AL, 1
+    je MOVE_BAIXO
+    cmp AL, 2
+    je MOVE_ESQUERDA
+    cmp AL,3
+    je MOVE_DIREITA
+    cmp AL,4
+    je MOVE_DIAGONAL_CIMA
+    cmp AL,5
+    je MOVE_DIAGONAL_BAIXO
 
-LACO_MOVE:
-    movsb
-    loop LACO_MOVE
-
-    sub SI, 320
+;--------------------------MOVER PARA CIMA---------------------------;  
+MOVE_CIMA:
     sub DI, 320
+LACO_CIMA:
+    mov CX,20
+    rep movsb
+
+    add SI, 300
+    add DI, 300
     dec BL
     jnz LACO_CIMA
+    jmp FIM
+;--------------------------------------------------------------------;   
+;--------------------------MOVER PARA BAIXO-------------------------;  
+MOVE_BAIXO:
+   add SI, 2880
+   add DI, 3200
+LACO_BAIXO:
+   mov CX,20
+   rep movsb
+   
+   sub SI, 340
+   sub DI, 340
+   dec BL
+   jnz LACO_BAIXO
+   jmp FIM
+;--------------------------------------------------------------------;
+;------------------------MOVER PARA ESQUERDA-------------------------;
+MOVE_ESQUERDA:
+    sub DI,1
+LACO_ESQUERDA:
+    mov CX,20
+    rep movsb
+
+    add SI, 300
+    add DI, 300
+    dec BL
+    jnz LACO_ESQUERDA
+    jmp FIM
+;--------------------------------------------------------------------;
+;------------------------MOVER PARA DIREITA--------------------------;
+MOVE_DIREITA:
+    STD
+    add SI,20
+    add DI,21
+LACO_DIREITA:
+    mov CX,22
+    rep movsb
+   
+    add SI, 342
+    add DI, 342
+    dec BL
+    jnz LACO_DIREITA
+    jmp FIM
+;--------------------------------------------------------------------;
+;-------------------MOVER PARA DIAGONAL CIMA-------------------------;     
+MOVE_DIAGONAL_CIMA:
+    sub DI, 322
+LACO_DIAGONAL_CIMA: 
+    mov CX,20
+    rep movsb
+
+    add SI, 300
+    add DI, 300
+    dec BL
+    jnz LACO_DIAGONAL_CIMA   
+    JMP FIM
+;--------------------------------------------------------------------;
+;-------------------MOVER PARA DIAGONAL BAIXO------------------------; 
+MOVE_DIAGONAL_BAIXO:    
+    add SI, 2880
+    add DI, 3198
+LACO_DIAGONAL_BAIXO:
+    mov CX,20
+    rep movsb
+
     
-    
+    sub SI, 340
+    sub DI, 340
+    dec BL
+    jnz LACO_DIAGONAL_BAIXO 
+;--------------------------------------------------------------------;    
+FIM:
+    mov AX,@data
+    mov ds,ax
+    mov AL , [flag_move]
+   cmp AL, 1
+   je INC_BAIXO
+   cmp AL, 2
+   je INC_ESQUERDA
+   cmp AL,3
+   je INC_DIREITA
+   cmp AL,4
+   je INC_DIAGONAL_CIMA
+   cmp AL,5
+   je INC_DIAGONAL_BAIXO
+
+INC_CIMA:
+   inc naveY
+   jmp ENDI
+INC_BAIXO:
+    dec naveY
+    jmp ENDI
+INC_ESQUERDA:
+    inc nave_inicial1x
+    jmp ENDI
+INC_DIREITA:
+    dec nave_inicial2x
+    jmp ENDI
+INC_DIAGONAL_CIMA:
+    inc alienY
+    dec alienX
+    jmp ENDI
+INC_DIAGONAL_BAIXO:
+    dec alienY
+    dec alienX
+
+
+ENDI:
     pop DI
     pop SI
     pop CX
     pop BX
     pop AX
     ret
-move_cima ENDP
+mover ENDP
 
 imprime_botoes PROC
     push CX
@@ -434,7 +506,7 @@ print_logo_inicial PROC
     mov CX, logo_length ; tamanho
     mov BL, 0AH ; cor
     mov DL, 2 ;coluna
-    mov DH, 2 ; linha 
+    mov DH, 2 ; linha
 
     call print_string
     
@@ -467,12 +539,24 @@ LACO_TECLA:
     cmp AL, 20h ; spaco
     je SELECT
     jmp LACO_TECLA
-
     
+
 TROCAR_COR:
     xor [flag_menu], 1          ; Inverte a flag: 0 -> 1 ou 1 -> 0
     call imprime_botoes
+ 
+LACO_NAVE:
+    call suspende
+    mov flag_move,3
+    mov AX, 90
+    mov BX, nave_inicial2x
+    mov flag_move, 2
+    call mover
+    mov AX, 80
+    mov BX, nave_inicial1x
+    mov flag_move, 3
     jmp LACO_TECLA
+
 SELECT:
     xor AX,AX
     mov AL, [flag_menu]         ; Carrega a flag em AL
@@ -505,19 +589,10 @@ inicio:
     mov DS, AX
     mov es, AX
     call video
-    ;call print_logo_inicial
-    ;call troca_menu
-    mov cor,5
-    mov si, OFFSET nave
-    mov ax,80; y
-    mov bx,10 ; x
-    call print_nave
-    mov cx,20
-laco3:
-    call suspende
-    call move_baixo
-    loop laco3
+    call print_logo_inicial
+    call troca_menu
 
+    
     mov AH, 4CH
     int 21h
     
