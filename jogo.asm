@@ -32,64 +32,88 @@
     
     flag_setor db 1 ; 1 - setor 1, 2 - setor 2 , 3 - setor 3 , 4 - ganhou , 0 - morreu
     
-    setor_1        db '', 13, 10
-                   db ' ____  _____ _____  ____  ____    _ ', 13, 10
-                   db '/ ___\/  __//__ __\/  _ \/  __\  / \', 13, 10
-                   db '|    \|  \    / \  | / \||  \/|  | |', 13, 10
-                   db '\___ ||  /_   | |  | \_/||    /  | |', 13, 10
-                   db '\____/\____\  \_/  \____/\_/\_\  \_/', 13, 10
-                   db '                                     ', 13, 10
+    setor_1     db ' ',13,10
+                db '               _               __ ',13,10
+                db '              | |             /_ |',13,10
+                db '      ___  ___| |_ ___  _ __   | |',13,10
+                db '     / __|/ _ \ __/ _ \|  __|  | |',13,10
+                db '     \__ \  __/ || (_) | |     | |',13,10
+                db '     |___/\___|\__\___/|_|     |_|',13,10
+                db '                               ',13,10                                                
+
 
     setor1_length EQU $ - setor_1
     
-    setor_2        db '', 13, 10
-                   db ' ____  _____ _____  ____  ____    ____ ', 13, 10
-                   db '/ ___\/  __//__ __\/  _ \/  __\  /_   \', 13, 10
-                   db '|    \|  \    / \  | / \||  \/|   /   /', 13, 10
-                   db '\___ ||  /_   | |  | \_/||    /  /   /_', 13, 10
-                   db '\____/\____\  \_/  \____/\_/\_\  \____/', 13, 10
-                   db '                                        ', 13, 10
+    setor_2         db ' ',13,10
+                    db '               _               ___  ',13,10
+                    db '              | |             |__ \ ',13,10
+                    db '      ___  ___| |_ ___  _ __     ) |',13,10
+                    db '     / __|/ _ \ __/ _ \|  __|   / / ',13,10
+                    db '     \__ \  __/ || (_) | |     / /_ ',13,10
+                    db '     |___/\___|\__\___/|_|    |____|',13,10
+                    db ' ',13,10
+                                
+                                
+
 
     setor2_length EQU $ - setor_2
     
-    setor_3        db '', 13, 10
-                   db ' ____  _____ _____  ____  ____   _____ ', 13, 10
-                   db '/ ___\/  __//__ __\/  _ \/  __\  \__  \', 13, 10
-                   db '|    \|  \    / \  | / \||  \/|    /  |', 13, 10
-                   db '\___ ||  /_   | |  | \_/||    /   _\  |', 13, 10
-                   db '\____/\____\  \_/  \____/\_/\_\  /____/', 13, 10
-                   db '                                        ', 13, 10
+    setor_3             db ' ',13,10
+                        db '               _               ____   ',13,10
+                        db '              | |             |___ \  ',13,10
+                        db '      ___  ___| |_ ___  _ __    __) | ',13,10
+                        db '     / __|/ _ \ __/ _ \|  __|  |__ <  ',13,10
+                        db '     \__ \  __/ || (_) | |     ___) | ',13,10
+                        db '     |___/\___|\__\___/|_|    |____/  ',13,10
+                        db ' ',13,10
+                                                                    
+                                 
+
 
     setor3_length EQU $ - setor_3
     
-    nave    db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-            db 0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-            db 1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-            db 1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-            db 0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0
-            db 0,0,1,1,1,1,0,0,0,0,1,1,1,1,1,0,0,0,0,0
-            db 0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0
-            db 1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0
-            db 1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-            db 0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 
-            db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+    nave    db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+            db 0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+            db 0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+            db 0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+            db 0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0
+            db 0,0,0,1,1,1,1,0,0,0,0,1,1,1,1,1,0,0,0,0,0
+            db 0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0
+            db 0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+            db 0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+            db 0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 
+            db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
      
      
-    nave_contrario      db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-                        db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0
-                        db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1
-                        db 0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1
-                        db 0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0
-                        db 0,0,0,0,0,1,1,1,1,1,0,0,0,0,1,1,1,1,0,0
-                        db 0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0
-                        db 0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1
-                        db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1
-                        db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0
-                        db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+    nave_contrario      db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+                        db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0
+                        db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,0
+                        db 0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0
+                        db 0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0
+                        db 0,0,0,0,0,1,1,1,1,1,0,0,0,0,1,1,1,1,0,0,0
+                        db 0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0
+                        db 0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0
+                        db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,0
+                        db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0
+                        db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+                        
+     preto  db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+            db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+            db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+            db 0,0,0,0,0,0,00,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+            db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+            db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+            db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+            db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+            db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+            db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 
+            db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+            
+            
      cor db 1
      
-     naveY dw 80
-     naveX dw 10
+     naveY dw 95
+     naveX dw 40
      alturaNave dw 11
      comprimentoNave dw 20
      flag_move db 0 ; 0 -> cima , 1 -> baixo, 2 -> esquerda , 3-> direita , 4 -> diagonal cima , 5 -> diagnoal baixo
@@ -106,7 +130,8 @@ suspende PROC
     push CX
     push AX
     push DX
-    xor CX,CXW
+   ;mov CX,0FH
+    xor CX,CX
     mov DX, 0FFFFh
     mov AH,86h
     int 15h
@@ -140,17 +165,18 @@ print_string PROC
 print_string ENDP
 
 verifica_tecla PROC
-    ;mov ah, 01h ; verifica se tem no buffer 
-    ;int 16h a principio n?o precisa 
-    ; ZF = 1 tecla pressionada e no buffer , ZF = 0 tecla n pressionada
+    mov AH, 01h         ; Fun??o 1: Checar tecla
+    int 16h             ; Interrup??o do teclado
+    jz TECLA_NAO_PRESSIONADA ; Se ZF = 1, nenhuma tecla foi pressionada
+    mov AH, 00h         ; Tecla pressionada, prepara para ler
+    int 16h             ; Fun??o 0: L? a tecla pressionada
+    ret
 
-    xor AL,AL ;deixa como padr?o o NULL caso n?o tenha pressionado nada
-    mov AH, 00h
-    int 16h
-    ;tecla em al
-        
+TECLA_NAO_PRESSIONADA:
+    xor AL, AL          ; Retorna 0 em AL para indicar "nenhuma tecla"
     ret
 verifica_tecla ENDP
+
 
 video PROC
     push AX
@@ -177,7 +203,7 @@ print_nave proc
     
     mov bl, 11
     laco_desenha_objeto:
-        mov cx, 20
+    mov cx, 21
         laco_troca_cor:
              mov al,[si]
              cmp al,0
@@ -188,7 +214,7 @@ print_nave proc
              movsb
              dec cx
              jnz laco_troca_cor
-        add di, 300
+             add di, 299
         dec bl
         jz fim_desenha_objeto
         jmp laco_desenha_objeto
@@ -208,6 +234,8 @@ mover PROC;recebe como parametro  Ax -> y , BX -> x
     push CX
     push SI
     push DI
+    push ES
+    push DS
     
     mov cx, 320
 
@@ -268,7 +296,7 @@ LACO_BAIXO:
 MOVE_ESQUERDA:
     sub DI,1
 LACO_ESQUERDA:
-    mov CX,20
+    mov CX,21
     rep movsb
 
     add SI, 300
@@ -283,11 +311,11 @@ MOVE_DIREITA:
     add SI,20
     add DI,21
 LACO_DIREITA:
-    mov CX,22
+    mov CX,21
     rep movsb
    
-    add SI, 342
-    add DI, 342
+    add SI, 340
+    add DI, 340
     dec BL
     jnz LACO_DIREITA
     jmp FIM
@@ -335,16 +363,16 @@ FIM:
    je INC_DIAGONAL_BAIXO
 
 INC_CIMA:
-   inc naveY
+   dec naveY
    jmp ENDI
 INC_BAIXO:
-    dec naveY
+   inc naveY
     jmp ENDI
 INC_ESQUERDA:
-    inc nave_inicial1x
+    dec nave_inicial2x
     jmp ENDI
 INC_DIREITA:
-    dec nave_inicial2x
+    inc nave_inicial1x
     jmp ENDI
 INC_DIAGONAL_CIMA:
     inc alienY
@@ -356,6 +384,8 @@ INC_DIAGONAL_BAIXO:
 
 
 ENDI:
+    pop DS
+    pop ES  
     pop DI
     pop SI
     pop CX
@@ -420,6 +450,28 @@ FINAL:
     ret
 imprime_botoes ENDP
 
+mover_nave_inicial PROC
+    push AX
+    push BX
+    push SI
+    push DI
+    call suspende
+    mov AX, 90
+    mov BX, nave_inicial2x
+    mov flag_move, 2
+    call mover
+    mov AX, 80
+    mov BX, nave_inicial1x
+    mov flag_move, 3
+    call mover
+    
+    pop DI
+    pop SI
+    pop BX
+    pop AX
+    ret
+mover_nave_inicial ENDP
+
 imprime_setor PROC
     push CX
     push AX
@@ -447,8 +499,8 @@ SETOR1:
     mov BP, OFFSET setor_1
     mov CX, setor1_length ; tamanho
     mov BL, 0CH ; cor
-    mov DL, 2 ;coluna
-    mov DH, 15 ; linha
+    mov DL, 5 ;coluna
+    mov DH, 7 ; linha
     call print_string
     jmp FINALIZAR2
     
@@ -456,8 +508,8 @@ SETOR2:
     mov BP, OFFSET setor_2
     mov CX, setor2_length; tamanho
     mov BL, 0CH ; cor
-    mov DL, 2 ;coluna
-    mov DH, 15 ; linha
+    mov DL, 0 ;coluna
+    mov DH, 7 ; linha
     call print_string
     jmp FINALIZAR2
     
@@ -465,8 +517,8 @@ SETOR3:
     mov BP, OFFSET setor_3
     mov CX, setor3_length ; tamanho
     mov BL, 0CH ; cor
-    mov DL, 2 ;coluna
-    mov DH, 15 ; linha
+    mov DL, 0 ;coluna
+    mov DH, 7 ; linha
     call print_string
     jmp FINALIZAR2
     
@@ -488,6 +540,8 @@ MORTE:
     call print_string
     
 FINALIZAR2:
+    call suspende
+    call suspende
     pop DX
     pop BP
     pop BX
@@ -501,6 +555,7 @@ print_logo_inicial PROC
     push CX
     push BX
     push DX
+    push si
 
     mov BP, OFFSET logo
     mov CX, logo_length ; tamanho
@@ -538,29 +593,22 @@ LACO_TECLA:
     je SELECT
     cmp AL, 20h ; spaco
     je SELECT
-    jmp LACO_TECLA
-    
+    cmp AL, 0
+    call mover_nave_inicial
+    je LACO_TECLA
+    JMP LACO_TECLA    
 
 TROCAR_COR:
     xor [flag_menu], 1          ; Inverte a flag: 0 -> 1 ou 1 -> 0
     call imprime_botoes
- 
-LACO_NAVE:
-    call suspende
-    mov flag_move,3
-    mov AX, 90
-    mov BX, nave_inicial2x
-    mov flag_move, 2
-    call mover
-    mov AX, 80
-    mov BX, nave_inicial1x
-    mov flag_move, 3
-    jmp LACO_TECLA
+    JMP LACO_TECLA
 
 SELECT:
     xor AX,AX
     mov AL, [flag_menu]         ; Carrega a flag em AL
     
+    call video
+    pop SI
     pop DX
     pop CX
     pop BX
@@ -583,6 +631,105 @@ FINALIZAR:
     ret
 troca_menu ENDP
 
+printar_jogo PROC
+    call video
+;-------------------------------------------------;  
+;-------------------1 nave------------------------; 
+    mov cor,5
+    mov si, OFFSET nave
+    mov ax,25
+    mov bx,5
+    call print_nave
+;-------------------------------------------------;  
+;-------------------2 nave------------------------; 
+    mov cor,20H
+    mov si, OFFSET nave
+    mov ax,45
+    mov bx,5
+    call print_nave
+;-------------------------------------------------;  
+;-------------------3 nave------------------------; 
+    mov cor,3
+    mov si, OFFSET nave
+    mov ax,65
+    mov bx,5
+    call print_nave
+;-------------------------------------------------;  
+;-------------------4 nave------------------------;     
+    mov cor,2
+    mov si, OFFSET nave
+    mov ax,85
+    mov bx,5
+    call print_nave
+;-------------------------------------------------;  
+;-------------------5 nave------------------------;     
+    mov cor,0Eh
+    mov si, OFFSET nave
+    mov ax,105
+    mov bx,5
+    call print_nave
+;-------------------------------------------------;  
+;-------------------6 nave------------------------;     
+    mov cor,0CH
+    mov si, OFFSET nave
+    mov ax,125
+    mov bx,5
+    call print_nave
+;-------------------------------------------------;  
+;-------------------7 nave------------------------;
+    mov cor,4h   
+    mov si, OFFSET nave
+    mov ax,145
+    mov bx,5
+    call print_nave
+;-------------------------------------------------;  
+;-------------------8 nave------------------------;     
+    mov cor,0DH
+    mov si, OFFSET nave
+    mov ax,165
+    mov bx,5
+    call print_nave
+;-------------------------------------------------;  
+;-----------------nave principal------------------;
+    mov cor,0DH
+    mov si, OFFSET nave
+    mov ax,95
+    mov bx,40
+    call print_nave       
+LACO_TECLA_JOGO:
+    call verifica_tecla
+    cmp AL ,48H
+    je CIMA
+    cmp AL, 50H
+    je BAIXO
+    cmp AL, 73H ;W OU S
+    je BAIXO;TROCAR_COR
+    cmp AL, 77H ; W OU S
+    je CIMA
+    cmp AL, 0DH ; enter
+    je TIRO
+    cmp AL, 20h ; spaco
+    je TIRO
+    cmp AL, 0
+    je LACO_TECLA_JOGO
+    jmp LACO_TECLA_JOGO
+    
+CIMA:
+    mov AX, naveY
+    mov BX, naveX
+    mov flag_move, 0
+    call mover
+    jmp LACO_TECLA_JOGO
+BAIXO:
+    mov AX, naveY
+    mov BX, naveX
+    mov flag_move, 1
+    call mover
+    jmp LACO_TECLA_JOGO
+TIRO:
+ 
+   ret
+printar_jogo ENDP
 
 inicio:
     mov AX, @data
@@ -591,7 +738,7 @@ inicio:
     call video
     call print_logo_inicial
     call troca_menu
-
+    call printar_jogo
     
     mov AH, 4CH
     int 21h
