@@ -28,10 +28,6 @@
    
     menuSair_length EQU $ - menuSair
     
-    flag_menu db 0 ; 0 JOGAR SELECIONADO , 1 SAIR SELECIONADO
-    
-    flag_setor db 1 ; 1 - setor 1, 2 - setor 2 , 3 - setor 3 , 4 - ganhou , 0 - morreu
-    
     setor_1     db ' ',13,10
                 db '               _               __ ',13,10
                 db '              | |             /_ |',13,10
@@ -39,7 +35,7 @@
                 db '     / __|/ _ \ __/ _ \|  __|  | |',13,10
                 db '     \__ \  __/ || (_) | |     | |',13,10
                 db '     |___/\___|\__\___/|_|     |_|',13,10
-                db '                               ',13,10                                                
+                db '                                  ',13,10                                                
 
 
     setor1_length EQU $ - setor_1
@@ -96,11 +92,21 @@
                         db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,0
                         db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0
                         db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+
+    alien db  0,0,0,1,0,0,0,0,0,0,0,1,0,0,0
+          db  0,0,0,0,1,0,0,0,0,0,1,0,0,0,0
+          db  0,0,0,0,0,1,0,0,0,1,0,0,0,0,0
+          db  0,0,0,0,1,1,1,1,1,1,1,0,0,0,0
+          db  0,0,0,1,1,0,1,1,1,0,1,1,0,0,0
+          db  0,0,1,0,1,1,1,1,1,1,1,0,1,0,0
+          db  0,0,1,0,1,1,1,1,1,1,1,0,1,0,0
+          db  0,0,1,0,1,0,0,0,0,0,1,0,1,0,0
+          db  0,0,0,0,0,1,1,0,1,1,0,0,0,0,0
                         
-     preto  db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+    preto   db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
             db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
             db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-            db 0,0,0,0,0,0,00,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+            db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
             db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
             db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
             db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -108,31 +114,78 @@
             db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
             db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 
             db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+
+    cenario db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0
+            db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0
+            db 0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,0,1,0,0,0,0,0,0,0,0
+            db 0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0
+            db 0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0
+            db 0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0
+            db 0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0
+            db 0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0
+            db 0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+            db 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+            db 420 dup(1)
+            db 420 dup(1)
+            db 420 dup(1)
+            db 420 dup(1)
+            db 420 dup(1)
+            db 420 dup(1)
+            db 420 dup(1)
+            db 420 dup(1)
+            db 420 dup(1)
             
-            
-     cor db 1
+       tiro db 0,0,0,1,1,1,0,0
+            db 0,1,1,1,1,1,1,1
+            db 0,0,0,1,1,1,0,0
      
+     cenarioX dw 300
+     
+     tiroY dw 280
+     tiroX dw 55
      naveY dw 95
      naveX dw 40
-     alturaNave dw 11
-     comprimentoNave dw 20
-     flag_move db 0 ; 0 -> cima , 1 -> baixo, 2 -> esquerda , 3-> direita , 4 -> diagonal cima , 5 -> diagnoal baixo
-     ;segundos db '00',13,10
-     ;segundos_length EQU $ - segundos
+     alienY dw 305
+     alienX dw 50
+     
      nave_inicial1x dw 10
      nave_inicial2x dw 290
-     alienX db 0
-     alienY db 0
+     
+     pontuacao db 'Pontos: 0000' , 13,10
+     pontuacao_lenght EQU $ - pontuacao
+     tempo db 'Tempo: 60' ,13,10
+     tempo_lenght EQU $ - tempo
+     
+     flag_move db 0 ; 0 -> cima , 1 -> baixo, 2 -> esquerda , 3-> direita , 4 -> diagonal cima , 5 -> diagnoal baixo
+     flag_tiro db 0
+     tiro_ativado db 0
+     flag_menu db 0 ; 0 JOGAR SELECIONADO , 1 SAIR SELECIONADO
+     flag_setor db 1 ; 1 - setor 1, 2 - setor 2 , 3 - setor 3 , 4 - ganhou , 0 - morreu
+     flag_alien db 0
+     seed dw 60
+     segundos dw 60
+     
+     color db 1
+     
         
 .code
 
-suspende PROC
+;------------------------------------FUN??ES PRIMARIAS---------------------------------------------;
+
+video PROC
+    push AX
+    mov AX, 13H      
+    int 10H         
+    pop AX  
+    ret
+video ENDP
+
+suspend PROC
     push CX
     push AX
     push DX
-   ;mov CX,0FH
     xor CX,CX
-    mov DX, 0FFFFh
+    mov DX, 0FFFh
     mov AH,86h
     int 15h
     
@@ -140,7 +193,158 @@ suspende PROC
     pop AX
     pop CX
     ret
-suspende ENDP
+suspend ENDP
+
+key_verify PROC
+    mov AH, 01h         ; Fun??o 1: Checar tecla
+    int 16h             ; Interrup??o do teclado
+    jz key_not_pressed ; Se ZF = 1, nenhuma tecla foi pressionada
+    mov AH, 00h         ; Tecla pressionada, prepara para ler
+    int 16h             ; Fun??o 0: L? a tecla pressionada
+    ret
+key_not_pressed:
+    xor AL, AL          ; Retorna 0 em AL para indicar "nenhuma tecla"
+    ret
+key_verify ENDP
+
+inc_points PROC
+    push SI
+    push AX
+    
+    mov SI, OFFSET pontuacao
+    add SI,9
+    mov AX,[SI]
+    cmp AL,'9'
+    je its_nine
+    
+    add AX,1
+    mov [SI],AX
+    jmp FIM
+    
+its_nine:
+    sub AX,9
+    mov [SI],AX
+    dec SI
+    mov AX,[SI]
+    inc AX
+    mov [SI],AX
+
+FIM:
+    pop AX
+    pop SI
+    ret
+    inc_points ENDP
+
+random PROC
+    push AX
+    push BX
+    push DX
+    
+    mov AX, [segundos]       ; Carregar a seed atual
+    test AX, 1           ; Testar se o bit menos significativo ? 1 (?mpar)
+    jz even_case         ; Se zero, ? par, ent?o vai para o caso par
+
+odd_case:
+    ; Caso ?mpar: multiplicar por 3 e adicionar um valor fixo
+    mov BX, [segundos]
+    shl BX,2
+    mul BX                  
+    add AX, 7            ; Adicionar um incremento arbitr?rio (ex.: 7)
+    jmp update_seed      ; Pular para atualiza??o da seed
+
+even_case:
+    mov BX, [seed]
+    shr BX,1
+    mul BX
+    shl AX, 5            ; AX = AX / 2
+    add AX, 5            ; Adicionar um incremento arbitr?rio (ex.: 5)
+
+update_seed:
+    test AX, 1
+    jz evn
+odd:
+    shr AX,1
+    jmp FIM11
+
+evn:
+    shl AX,3
+    
+FIM11:    
+    mov [seed], AX       ; Atualizar a seed
+
+    pop DX
+    pop BX
+    pop AX
+    ret
+random ENDP
+
+generate_coordinates PROC
+    push AX
+    push BX
+    push CX
+    
+    ; Gerar coordenada Y
+    call random          ; Gera um n?mero aleat?rio
+    mov AX,[seed]
+    mov CX, 200          ; Altura m?xima
+    xor DX, DX
+    div CX               ; AX / CX -> Quociente em AL (0-199)
+    mov [alienX], AX     ; Guardar Y em coordY
+
+    pop CX
+    pop BX
+    pop AX
+    ret
+generate_coordinates ENDP
+
+change_time PROC
+    push SI
+    push AX
+    ;tempo db Tempo: 60 ,13,10
+    mov AX,[segundos]
+    dec AX
+    mov [segundos],AX
+    mov SI, OFFSET tempo
+    add SI,8
+    mov AX,[SI]
+    cmp AL,'0'
+    je its_zero
+    
+    sub AX,1
+    mov [SI],AX
+    jmp FIM9
+    
+its_zero:
+    add ax,9
+    mov [SI],ax
+    dec SI
+    mov AX,[SI]
+    cmp AL,'0'
+    je FIM9
+    dec AX
+    mov [SI],AX
+    
+FIM9:
+    pop AX
+    pop SI 
+    ret
+change_time ENDP
+
+restart_time PROC
+    push SI
+    push AX
+    mov SI, OFFSET tempo
+    add SI,8
+    mov AL,'0'
+    mov [SI],AX
+    dec SI
+    mov AL,'6'
+    mov [SI],AX
+    
+    pop AX
+    pop SI 
+    ret
+restart_time ENDP
 
 print_string PROC
     push AX
@@ -164,35 +368,15 @@ print_string PROC
     ret
 print_string ENDP
 
-verifica_tecla PROC
-    mov AH, 01h         ; Fun??o 1: Checar tecla
-    int 16h             ; Interrup??o do teclado
-    jz TECLA_NAO_PRESSIONADA ; Se ZF = 1, nenhuma tecla foi pressionada
-    mov AH, 00h         ; Tecla pressionada, prepara para ler
-    int 16h             ; Fun??o 0: L? a tecla pressionada
-    ret
-
-TECLA_NAO_PRESSIONADA:
-    xor AL, AL          ; Retorna 0 em AL para indicar "nenhuma tecla"
-    ret
-verifica_tecla ENDP
-
-
-video PROC
-    push AX
-    mov AX, 13H      
-    int 10H         
-    pop AX  
-    ret
-video ENDP
-
-print_nave proc
+print_object proc ;recebe como parametro  Ax -> y , BX -> x , DL -> altura, DH -> comprimento
     push ds
     push cx
     push ax
     push di
     push es
-
+    
+    CLD
+    push DX
     mov cx, 320
     mul cx 
     mov di,ax   
@@ -201,34 +385,41 @@ print_nave proc
     mov ax, 0A000h
     mov es, ax
     
-    mov bl, 11
-    laco_desenha_objeto:
-    mov cx, 21
-        laco_troca_cor:
+    pop DX
+    xor bx,bx
+    xor cx,cx
+    mov bx,dx
+    mov dl,bh
+    loop_draw_object:
+    mov cl, bh
+        loop_change_color:
              mov al,[si]
              cmp al,0
-             je desativado
-             mov al,cor
+             je disabled
+             mov al,color
              mov [si],al
-         desativado:
+         disabled:
              movsb
              dec cx
-             jnz laco_troca_cor
-             add di, 299
+             jnz loop_change_color
+             mov ax, 320
+             xor dh,dh
+             sub ax,dx
+             add di,ax
         dec bl
-        jz fim_desenha_objeto
-        jmp laco_desenha_objeto
+        jz FIM2
+        jmp loop_draw_object
     
-    fim_desenha_objeto:
+    FIM2:
         pop es
         pop di
         pop ax
         pop cx
         pop ds
         ret
-print_nave endp
+print_object endp
 
-mover PROC;recebe como parametro  Ax -> y , BX -> x 
+move PROC;recebe como parametro  Ax -> y , BX -> x , DL -> altura, DH -> comprimento
     push AX
     push BX
     push CX
@@ -236,7 +427,9 @@ mover PROC;recebe como parametro  Ax -> y , BX -> x
     push DI
     push ES
     push DS
+    push DX
     
+    push DX
     mov cx, 320
 
     mul CX
@@ -252,8 +445,14 @@ mover PROC;recebe como parametro  Ax -> y , BX -> x
     mov ES, AX
     mov DS, Ax
     
-    mov BL, 11
     pop AX
+    pop DX
+    xor BX,BX
+    xor CX,CX
+    mov BX,DX
+    mov dl,bh
+    xor dh,dh
+    
     cmp AL, 1
     je MOVE_BAIXO
     cmp AL, 2
@@ -269,85 +468,98 @@ mover PROC;recebe como parametro  Ax -> y , BX -> x
 MOVE_CIMA:
     sub DI, 320
 LACO_CIMA:
-    mov CX,20
+    mov cl,bh
     rep movsb
-
-    add SI, 300
-    add DI, 300
+    
+    mov ax,320
+    sub ax,dx
+    add SI, ax
+    add DI, ax
     dec BL
     jnz LACO_CIMA
-    jmp FIM
+    jmp FIM3
 ;--------------------------------------------------------------------;   
 ;--------------------------MOVER PARA BAIXO-------------------------;  
 MOVE_BAIXO:
    add SI, 2880
    add DI, 3200
 LACO_BAIXO:
-   mov CX,20
+   mov cl,bh
    rep movsb
    
-   sub SI, 340
-   sub DI, 340
+   mov ax,320
+   add ax,dx
+   sub SI, ax
+   sub DI, ax
    dec BL
    jnz LACO_BAIXO
-   jmp FIM
+   jmp FIM3
 ;--------------------------------------------------------------------;
 ;------------------------MOVER PARA ESQUERDA-------------------------;
 MOVE_ESQUERDA:
     sub DI,1
 LACO_ESQUERDA:
-    mov CX,21
+    mov cl,bh
     rep movsb
-
-    add SI, 300
-    add DI, 300
+    
+    mov ax,320
+    sub ax,dx
+    add SI, ax
+    add DI, ax
     dec BL
     jnz LACO_ESQUERDA
-    jmp FIM
+    jmp FIM3
 ;--------------------------------------------------------------------;
 ;------------------------MOVER PARA DIREITA--------------------------;
 MOVE_DIREITA:
     STD
-    add SI,20
-    add DI,21
+    add SI,dx
+    add DI,dx
+    inc DI
 LACO_DIREITA:
-    mov CX,21
+    mov cl,bh
+    inc cl
     rep movsb
    
-    add SI, 340
-    add DI, 340
+    mov ax,320
+    add ax,dx
+    add SI,ax
+    add DI,ax
     dec BL
     jnz LACO_DIREITA
-    jmp FIM
+    jmp FIM3
 ;--------------------------------------------------------------------;
 ;-------------------MOVER PARA DIAGONAL CIMA-------------------------;     
 MOVE_DIAGONAL_CIMA:
     sub DI, 322
 LACO_DIAGONAL_CIMA: 
-    mov CX,20
+    mov cl,bh
     rep movsb
-
-    add SI, 300
-    add DI, 300
+    
+    mov ax,320
+    sub ax,dx
+    add SI, ax
+    add DI, ax
     dec BL
     jnz LACO_DIAGONAL_CIMA   
-    JMP FIM
+    JMP FIM3
 ;--------------------------------------------------------------------;
 ;-------------------MOVER PARA DIAGONAL BAIXO------------------------; 
 MOVE_DIAGONAL_BAIXO:    
     add SI, 2880
     add DI, 3198
 LACO_DIAGONAL_BAIXO:
-    mov CX,20
+    mov cl,bh
     rep movsb
 
-    
-    sub SI, 340
-    sub DI, 340
+    mov ax,320
+    add ax,dx
+    sub SI, ax
+    sub DI, ax
     dec BL
     jnz LACO_DIAGONAL_BAIXO 
 ;--------------------------------------------------------------------;    
-FIM:
+FIM3:
     mov AX,@data
     mov ds,ax
     mov AL , [flag_move]
@@ -372,7 +584,12 @@ INC_ESQUERDA:
     dec nave_inicial2x
     jmp ENDI
 INC_DIREITA:
+    cmp flag_tiro , 1
+    je INC_DIREITA_TIRO
     inc nave_inicial1x
+    jmp ENDI
+INC_DIREITA_TIRO:
+    inc tiroX
     jmp ENDI
 INC_DIAGONAL_CIMA:
     inc alienY
@@ -384,6 +601,7 @@ INC_DIAGONAL_BAIXO:
 
 
 ENDI:
+    pop DX
     pop DS
     pop ES  
     pop DI
@@ -392,9 +610,204 @@ ENDI:
     pop BX
     pop AX
     ret
-mover ENDP
+move ENDP
 
-imprime_botoes PROC
+colision PROC ; DH -> altura do objeto, DL -> largura do objeto
+              ; SI -> ponteiro para o primeiro objeto
+              ; DI -> ponteiro para o segundo objeto
+              ; Retorna: ZF = 1 se colis?o encontrada, ZF = 0 caso contr?rio  
+    push bx
+    push cx
+    push dx
+    xor ax,ax
+    xor bx,bx
+    xor cx,cx
+
+    cmp tiro_ativado,0
+    je FIM14
+    
+    mov bh, DL
+    mov bl, DH
+
+looop:
+    mov cl, bh
+inner_loop:
+    cmp si,di
+    je finded_colision
+    inc si
+    cmp si, di
+    je finded_colision
+    dec di
+    cmp si, di
+    je finded_colision
+    loop inner_loop
+
+    mov ax, 320
+    xor dx,dx
+    mov dl,bh
+    sub ax, dx
+    add si, ax
+    mov ax,320
+    add ax,dx
+    add di, ax
+
+    dec bl
+    jnz looop
+    jmp end_colision
+    
+finded_colision:
+    mov ax, 1
+    jmp FIM14
+
+end_colision:
+    xor ax,ax
+    
+FIM14:
+    pop dx
+    pop cx
+    pop bx
+    ret
+
+colision ENDP
+
+;------------------------------------FUN??ES SECUNDARIAS---------------------------------------------;
+   
+move_ship_initial PROC
+    push AX
+    push BX
+    push SI
+    push DI
+    push DX
+    
+    call suspend
+    mov AX, 90
+    mov BX, nave_inicial2x
+    mov DH,21
+    mov DL,11
+    mov flag_move, 2
+    call move
+    mov AX, 80
+    mov BX, nave_inicial1x
+    mov DH,21
+    mov DL,11
+    mov flag_move, 3
+    call move
+    
+    pop DX
+    pop DI
+    pop SI
+    pop BX
+    pop AX
+    ret
+move_ship_initial ENDP
+
+move_shot PROC
+    push AX
+    push BX
+    push DX
+    
+    ;cmp tiro_ativado,0
+    ;je FIM5
+    ;cmp tiroX,300
+    ;je FIM4
+    
+    mov AX,tiroY
+    mov BX,tiroX
+    mov DH,8
+    mov DL,3
+    mov flag_move,3
+    mov flag_tiro, 1
+    call move
+    jmp FIM5
+    
+FIM4:
+    mov tiro_ativado,0
+    mov AX,tiroY
+    mov BX,tiroX
+    mov dl,3
+    mov dh,8
+    mov SI, OFFSET preto
+    call print_object
+FIM5:
+    pop DX
+    pop BX
+    pop AX
+    ret
+move_shot ENDP
+
+print_black PROC     
+    mov SI,OFFSET preto
+    call print_object
+    ret
+    print_black ENDP
+
+print_header PROC
+    mov BP, OFFSET tempo
+    mov CX, tempo_lenght ; tamanho
+    mov BL, 0CH ; cor
+    mov DL, 71 ;coluna
+    mov DH, 0 ; linha
+    call print_string
+    
+    mov BP, OFFSET pontuacao
+    mov CX, pontuacao_lenght ; tamanho
+    mov BL, 0CH ; cor
+    mov DL, 0 ;coluna
+    mov DH, 0 ; linha
+    call print_string
+    ret
+print_header ENDP
+
+print_alien PROC
+    push SI
+    push AX
+    push BX
+    push DX
+    
+    mov flag_alien,1
+    call generate_coordinates
+    mov color,0DH
+    mov si, OFFSET alien
+    mov ax,alienX
+    mov bx,alienY
+    mov dl,9
+    mov dh,15
+    call print_object
+    
+    pop DX
+    pop BX
+    pop AX
+    pop SI
+    ret
+print_alien ENDP
+
+generate_alien PROC
+    push AX
+    push BX
+    push DX
+    
+    cmp flag_alien,1
+    je FIM12
+    ;cmp segundos, 57
+    jge FIM12
+    
+    call random          
+    mov AX, [seed]       
+    mov BX, 10          
+    div BX               
+    cmp DX, 0            
+    jne FIM12
+
+    call print_alien   
+
+FIM12:    
+    pop DX
+    pop BX
+    pop AX
+    ret
+generate_alien ENDP
+
+print_bottons PROC
     push CX
     push AX
     push BX
@@ -407,9 +820,9 @@ imprime_botoes PROC
 
     mov AL, [flag_menu]    ; Carrega a flag em AL
     test AL, AL            ; Testa se a flag ? 0 ou 1
-    jnz ATIVADO            ; Se a flag for 1, vai para ATIVADO
+    jnz ACTIVATE            ; Se a flag for 1, vai para ATIVADO
 
-DESATIVADO: ;JOGAR SELECIONADO
+DEACTIVATE: ;JOGAR SELECIONADO
     mov BP, OFFSET menuJogar
     mov CX, menuJogar_length ; tamanho
     mov BL, 0CH ; cor
@@ -423,9 +836,9 @@ DESATIVADO: ;JOGAR SELECIONADO
     mov DL, 2 ;coluna
     mov DH, 20 ; linha
     call print_string
-    jmp FINAL
+    jmp FIM6
 
-ATIVADO:;SAIR SELECIONADO
+ACTIVATE:;SAIR SELECIONADO
     mov BP, OFFSET menuJogar
     mov CX, menuJogar_length ; tamanho
     mov BL, 0FH ; cor
@@ -439,118 +852,18 @@ ATIVADO:;SAIR SELECIONADO
     mov DL, 2 ;coluna
     mov DH, 20 ; linha
     call print_string
-    jmp FINAL
+    jmp FIM6
 
-FINAL:
+FIM6:
     pop DX
     pop BP
     pop BX
     pop AX
     pop CX
     ret
-imprime_botoes ENDP
+print_bottons ENDP
 
-mover_nave_inicial PROC
-    push AX
-    push BX
-    push SI
-    push DI
-    call suspende
-    mov AX, 90
-    mov BX, nave_inicial2x
-    mov flag_move, 2
-    call mover
-    mov AX, 80
-    mov BX, nave_inicial1x
-    mov flag_move, 3
-    call mover
-    
-    pop DI
-    pop SI
-    pop BX
-    pop AX
-    ret
-mover_nave_inicial ENDP
-
-imprime_setor PROC
-    push CX
-    push AX
-    push BX
-    push BP
-    push DX
-    xor BX, BX
-    xor BP, BP
-    xor CX, CX
-    xor DX, DX
-    
-    mov AL, [flag_setor]
-    cmp AL, 1
-    je SETOR1
-    cmp AL, 2
-    je SETOR2
-    cmp AL, 3
-    je SETOR3 
-    cmp AL, 4
-    je VITORIA
-    jz MORTE
-    
-    
-SETOR1:
-    mov BP, OFFSET setor_1
-    mov CX, setor1_length ; tamanho
-    mov BL, 0CH ; cor
-    mov DL, 5 ;coluna
-    mov DH, 7 ; linha
-    call print_string
-    jmp FINALIZAR2
-    
-SETOR2:
-    mov BP, OFFSET setor_2
-    mov CX, setor2_length; tamanho
-    mov BL, 0CH ; cor
-    mov DL, 0 ;coluna
-    mov DH, 7 ; linha
-    call print_string
-    jmp FINALIZAR2
-    
-SETOR3:
-    mov BP, OFFSET setor_3
-    mov CX, setor3_length ; tamanho
-    mov BL, 0CH ; cor
-    mov DL, 0 ;coluna
-    mov DH, 7 ; linha
-    call print_string
-    jmp FINALIZAR2
-    
-VITORIA:
-    mov BP, OFFSET setor_1
-    mov CX, setor1_length ; tamanho
-    mov BL, 0CH ; cor
-    mov DL, 2 ;coluna
-    mov DH, 15 ; linha
-    call print_string
-    jmp FINALIZAR2
-    
-MORTE:
-    mov BP, OFFSET setor_1
-    mov CX, setor1_length ; tamanho
-    mov BL, 0CH ; cor
-    mov DL, 2 ;coluna
-    mov DH, 15 ; linha
-    call print_string
-    
-FINALIZAR2:
-    call suspende
-    call suspende
-    pop DX
-    pop BP
-    pop BX
-    pop AX
-    pop CX
-    ret
-imprime_setor ENDP
-
-print_logo_inicial PROC
+print_logo_initial PROC
     push BP
     push CX
     push BX
@@ -565,139 +878,250 @@ print_logo_inicial PROC
 
     call print_string
     
-    call imprime_botoes
+    call print_bottons
     
-    mov cor,5
+    mov color,5
     mov si, OFFSET nave
     mov ax,80
     mov bx,10
-    call print_nave
+    mov dl,11
+    mov dh,21
+    call print_object
     
-    mov cor,7
+    mov color,7
     mov si, OFFSET nave_contrario
     mov ax,90
     mov bx,290
-    call print_nave
+    mov dl,11
+    mov dh,21
+    call print_object
     
-LACO_TECLA:
-    call verifica_tecla
+loop_key:
+    call key_verify
     cmp AL ,48H
-    je TROCAR_COR
+    je change_color
     cmp AL, 50H
-    je TROCAR_COR
+    je change_color
     cmp AL, 73H ;W OU S
-    je TROCAR_COR;TROCAR_COR
+    je change_color;TROCAR_COR
     cmp AL, 77H ; W OU S
-    je TROCAR_COR
+    je change_color
     cmp AL, 0DH ; enter
     je SELECT
     cmp AL, 20h ; spaco
     je SELECT
     cmp AL, 0
-    call mover_nave_inicial
-    je LACO_TECLA
-    JMP LACO_TECLA    
+    call move_ship_initial
+    je loop_key
+    JMP loop_key    
 
-TROCAR_COR:
+change_color:
     xor [flag_menu], 1          ; Inverte a flag: 0 -> 1 ou 1 -> 0
-    call imprime_botoes
-    JMP LACO_TECLA
+    call print_bottons
+    JMP loop_key
 
 SELECT:
     xor AX,AX
     mov AL, [flag_menu]         ; Carrega a flag em AL
-    
-    call video
+
     pop SI
     pop DX
     pop CX
     pop BX
     pop BP
     ret
-print_logo_inicial ENDP
+print_logo_initial ENDP
 
-troca_menu PROC
+
+print_sector PROC
+    push CX
+    push AX
+    push BX
+    push BP
+    push DX
+    xor BX, BX
+    xor BP, BP
+    xor CX, CX
+    xor DX, DX
+    
+    mov AL, [flag_setor]
+    cmp AL, 1
+    je SECTOR1
+    cmp AL, 2
+    je SECTOR2
+    cmp AL, 3
+    je SECTOR3 
+    cmp AL, 4
+    je WIN
+    jz DIE
+    
+    
+SECTOR1:
+    mov BP, OFFSET setor_1
+    mov CX, setor1_length ; tamanho
+    mov BL, 0CH ; cor
+    mov DL, 5 ;coluna
+    mov DH, 7 ; linha
+    call print_string
+    jmp FIM7
+    
+SECTOR2:
+    mov BP, OFFSET setor_2
+    mov CX, setor2_length; tamanho
+    mov BL, 0CH ; cor
+    mov DL, 0 ;coluna
+    mov DH, 7 ; linha
+    call print_string
+    jmp FIM7
+    
+SECTOR3:
+    mov BP, OFFSET setor_3
+    mov CX, setor3_length ; tamanho
+    mov BL, 0CH ; cor
+    mov DL, 0 ;coluna
+    mov DH, 7 ; linha
+    call print_string
+    jmp FIM7
+    
+WIN:
+    mov BP, OFFSET setor_1
+    mov CX, setor1_length ; tamanho
+    mov BL, 0CH ; cor
+    mov DL, 2 ;coluna
+    mov DH, 15 ; linha
+    call print_string
+    jmp FIM7
+    
+DIE:
+    mov BP, OFFSET setor_1
+    mov CX, setor1_length ; tamanho
+    mov BL, 0CH ; cor
+    mov DL, 2 ;coluna
+    mov DH, 15 ; linha
+    call print_string
+    
+FIM7:
+    call suspend
+    call suspend
+    pop DX
+    pop BP
+    pop BX
+    pop AX
+    pop CX
+    ret
+print_sector ENDP
+
+change_menu PROC
     xor AX, AX
     mov AL, [flag_menu]         ; Carrega a flag em AL (0 = Jogar, 1 = Sair)
 
     cmp AL, 1                   ; Verifica se "sair" foi selecionado
-    je FINALIZAR
+    je FIM8
     
-JOGAR:
+play:
     call video                  ; Reset da tela
-    call imprime_setor
+    call print_sector
     
-FINALIZAR:    
+FIM8:    
     ret
-troca_menu ENDP
+change_menu ENDP
 
-printar_jogo PROC
+print_game PROC
     call video
 ;-------------------------------------------------;  
 ;-------------------1 nave------------------------; 
-    mov cor,5
+    mov color,5
     mov si, OFFSET nave
     mov ax,25
     mov bx,5
-    call print_nave
+    mov dl,11
+    mov dh,21
+    call print_object
 ;-------------------------------------------------;  
 ;-------------------2 nave------------------------; 
-    mov cor,20H
+    mov color,20H
     mov si, OFFSET nave
     mov ax,45
     mov bx,5
-    call print_nave
+    mov dl,11
+    mov dh,21
+    call print_object
 ;-------------------------------------------------;  
 ;-------------------3 nave------------------------; 
-    mov cor,3
+    mov color,3
     mov si, OFFSET nave
     mov ax,65
     mov bx,5
-    call print_nave
+    mov dl,11
+    mov dh,21
+    call print_object
 ;-------------------------------------------------;  
 ;-------------------4 nave------------------------;     
-    mov cor,2
+    mov color,2
     mov si, OFFSET nave
     mov ax,85
     mov bx,5
-    call print_nave
+    mov dl,11
+    mov dh,21
+    call print_object
 ;-------------------------------------------------;  
 ;-------------------5 nave------------------------;     
-    mov cor,0Eh
+    mov color,0Eh
     mov si, OFFSET nave
     mov ax,105
     mov bx,5
-    call print_nave
+    mov dl,11
+    mov dh,21
+    call print_object
 ;-------------------------------------------------;  
 ;-------------------6 nave------------------------;     
-    mov cor,0CH
+    mov color,0CH
     mov si, OFFSET nave
     mov ax,125
     mov bx,5
-    call print_nave
+    mov dl,11
+    mov dh,21
+    call print_object
 ;-------------------------------------------------;  
 ;-------------------7 nave------------------------;
-    mov cor,4h   
+    mov color,4h   
     mov si, OFFSET nave
     mov ax,145
     mov bx,5
-    call print_nave
+    mov dl,11
+    mov dh,21
+    call print_object
 ;-------------------------------------------------;  
 ;-------------------8 nave------------------------;     
-    mov cor,0DH
+    mov color,0DH
     mov si, OFFSET nave
     mov ax,165
     mov bx,5
-    call print_nave
+    mov dl,11
+    mov dh,21
+    call print_object
 ;-------------------------------------------------;  
 ;-----------------nave principal------------------;
-    mov cor,0DH
+    mov color,0DH
     mov si, OFFSET nave
     mov ax,95
     mov bx,40
-    call print_nave       
-LACO_TECLA_JOGO:
-    call verifica_tecla
+    mov dl,11
+    mov dh,21
+    call print_object
+;-------------------------------------------------; 
+;----------------print header---------------------;   
+    XOR CX,CX
+    mov CX,220
+    call print_header
+    
+;------------------------LOOP JOGO----------------------------;
+
+loop_key_game:
+    call key_verify
+    call update_game
+    call generate_alien
+    
     cmp AL ,48H
     je CIMA
     cmp AL, 50H
@@ -711,36 +1135,142 @@ LACO_TECLA_JOGO:
     cmp AL, 20h ; spaco
     je TIRO
     cmp AL, 0
-    je LACO_TECLA_JOGO
-    jmp LACO_TECLA_JOGO
+    je loop_key_game
+    jmp loop_key_game
     
 CIMA:
     mov AX, naveY
     mov BX, naveX
     mov flag_move, 0
-    call mover
-    jmp LACO_TECLA_JOGO
+    mov DL,11
+    mov DH,20
+    call move
+    jmp loop_key_game
 BAIXO:
     mov AX, naveY
     mov BX, naveX
+    mov DL,11
+    mov DH,20
     mov flag_move, 1
-    call mover
-    jmp LACO_TECLA_JOGO
+    call move
+    jmp loop_key_game
 TIRO:
+    cmp tiro_ativado, 1
+    je loop_key_game
+    mov AX, naveY
+    mov BX , naveX
+    add AX , 4
+    add BX, 22
+    mov tiroY, AX
+    mov tiroX, BX
+    mov color, 1
+    mov dl,3
+    mov dh,8
+    mov SI, OFFSET tiro
+    mov tiro_ativado,1
+    call print_object
+    jmp loop_key_game
  
    ret
-printar_jogo ENDP
+print_game ENDP
+
+update_game PROC ;recebe cx
+    push AX
+    push BX
+    push DX
+    push SI
+    push DI
+    
+    dec CX
+    ;jz update_time
+    xor AX,AX
+    call suspend
+    call move_shot
+    mov SI,tiroX
+    mov DI,alienX
+    mov dh,10
+    mov dl,10
+    call colision
+    
+    ;tenho que melhorar
+    ;vai verificar tanto o Y tanto o X
+    ; vai verificar de todas as colis?es de todas as naves 
+    
+    cmp AX,0
+    je FIM10
+    
+    mov AX,alienX
+    mov BX,alienY
+    mov dl,9
+    mov dh,15
+    mov SI,OFFSET preto
+    call print_object
+    mov flag_alien,0
+    
+    mov AX,tiroX
+    mov BX,tiroY
+    mov dl,3
+    mov dh,9
+    mov SI,OFFSET preto
+    call print_object
+    mov flag_tiro,0
+    
+
+    
+    jmp FIM10
+
+update_time:
+    call change_time
+    mov CX,220
+    call print_header
+    
+FIM10:
+    pop DI
+    pop SI
+    pop DX
+    pop BX
+    pop AX
+    ret
+update_game ENDP
 
 inicio:
     mov AX, @data
     mov DS, AX
     mov es, AX
     call video
-    call print_logo_inicial
-    call troca_menu
-    call printar_jogo
+    ;call print_logo_initial
+    ;call change_menu
+    call print_game     
+    mov AX,alienX
+    mov BX,alienY
+    mov dl,9
+    mov dh,15
+    mov SI,OFFSET alien
+    call print_object
+    mov AX,tiroX
+    mov BX,tiroY
+    mov dl,3
+    mov dh,8
+    mov SI,OFFSET tiro
+    mov tiro_ativado,1
+    mov flag_tiro , 1
+    call print_object
+        
+    mov SI,tiroY
+    mov DI,alienY
+    mov dh,3
+    mov dl,3
+    call colision
+   
+    
+    
+loop_teste:   
+    
+    call update_game
+    
+    loop loop_teste
     
     mov AH, 4CH
     int 21h
     
-end inicio
+    end inicio
