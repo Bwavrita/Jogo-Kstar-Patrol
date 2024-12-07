@@ -141,12 +141,12 @@
      
      cenarioX dw 300
      
-     tiroY dw 280
-     tiroX dw 55
+     tiroY dw 55
+     tiroX dw 205
      naveY dw 95
      naveX dw 40
-     alienY dw 305
-     alienX dw 50
+     alienX dw 305
+     alienY dw 50
      
      nave_inicial1x dw 10
      nave_inicial2x dw 290
@@ -185,7 +185,7 @@ suspend PROC
     push AX
     push DX
     xor CX,CX
-    mov DX, 0FFFh
+    mov DX, 0FFFFh
     mov AH,86h
     int 15h
     
@@ -289,7 +289,7 @@ generate_coordinates PROC
     mov CX, 200          ; Altura m?xima
     xor DX, DX
     div CX               ; AX / CX -> Quociente em AL (0-199)
-    mov [alienX], AX     ; Guardar Y em coordY
+    mov [alienY], AX     ; Guardar Y em coordY
 
     pop CX
     pop BX
@@ -706,8 +706,8 @@ move_shot PROC
     push BX
     push DX
     
-    ;cmp tiro_ativado,0
-    ;je FIM5
+    cmp tiro_ativado,0
+    je FIM5
     ;cmp tiroX,300
     ;je FIM4
     
@@ -1115,6 +1115,13 @@ print_game PROC
     mov CX,220
     call print_header
     
+    
+    mov AX,alienY
+    mov BX,alienX
+    mov dl,9
+    mov dh,15
+    mov SI,OFFSET alien
+    call print_object
 ;------------------------LOOP JOGO----------------------------;
 
 loop_key_game:
@@ -1163,6 +1170,8 @@ TIRO:
     add BX, 22
     mov tiroY, AX
     mov tiroX, BX
+    mov AX,tiroY
+    mov BX,tiroX
     mov color, 1
     mov dl,3
     mov dh,8
@@ -1185,11 +1194,11 @@ update_game PROC ;recebe cx
     ;jz update_time
     xor AX,AX
     call suspend
-    call move_shot
-    mov SI,tiroX
+    call move_shot; se for testar o Y SI -> alien DI -> tiro 
+    mov SI,tiroX ; se for X SI -> tiro DI -> alien
     mov DI,alienX
-    mov dh,10
-    mov dl,10
+    mov dh,3
+    mov dl,3
     call colision
     
     ;tenho que melhorar
@@ -1199,16 +1208,16 @@ update_game PROC ;recebe cx
     cmp AX,0
     je FIM10
     
-    mov AX,alienX
-    mov BX,alienY
+    mov AX,alienY
+    mov BX,alienX
     mov dl,9
     mov dh,15
     mov SI,OFFSET preto
     call print_object
     mov flag_alien,0
     
-    mov AX,tiroX
-    mov BX,tiroY
+    mov AX,tiroY
+    mov BX,tiroX
     mov dl,3
     mov dh,9
     mov SI,OFFSET preto
@@ -1256,8 +1265,8 @@ inicio:
     mov flag_tiro , 1
     call print_object
         
-    mov SI,tiroY
-    mov DI,alienY
+    mov SI,alienX
+    mov DI,tiroX
     mov dh,3
     mov dl,3
     call colision
