@@ -141,12 +141,18 @@
      
      cenarioX dw 300
      
-     tiroY dw 55
-     tiroX dw 205
+     tiroX dw ?
+     tiroY dw ?  ;N?O TROCAR MAIS 
+     
+     
+     
      naveY dw 95
-     naveX dw 40
-     alienX dw 305
-     alienY dw 50
+     naveX dw 40 ;N?O TROCAR MAIS
+     
+     nave_secX dw 5
+     
+     alienY dw 0
+     alienX dw 305 ; N?O TROCA MAIS
      
      nave_inicial1x dw 10
      nave_inicial2x dw 290
@@ -162,6 +168,7 @@
      flag_menu db 0 ; 0 JOGAR SELECIONADO , 1 SAIR SELECIONADO
      flag_setor db 1 ; 1 - setor 1, 2 - setor 2 , 3 - setor 3 , 4 - ganhou , 0 - morreu
      flag_alien db 0
+     flag_naves dw 1,1,1,1,1,1,1,1,1,1
      seed dw 60
      segundos dw 60
      
@@ -185,7 +192,7 @@ suspend PROC
     push AX
     push DX
     xor CX,CX
-    mov DX, 0FFFFh
+    mov DX, 0FFFh
     mov AH,86h
     int 15h
     
@@ -239,44 +246,31 @@ random PROC
     push AX
     push BX
     push DX
+    push CX
+
+    ; Pegar o tempo do sistema para incrementar a seed
+    mov AH, 2Ch             ; Servi?o para pegar o tempo atual
+    int 21h                 ; Executa a interrup??o
+    xor AX, DX              ; Mistura os segundos e os ticks
+    add [seed], AX          ; Incrementa a seed com um valor mais din?mico
+
+    ; Gerador Linear Congruente: new_seed = (A * seed + C) mod M
+    mov AX, [seed]
+    mov BX, 22695        ; Constante A (grande n?mero primo)
+    mul BX                  ; AX = AX * A
+    add AX, 1               ; Constante C (incremento)
+    mov [seed], AX          ; Atualiza a seed
+
+    ; Retorna o valor gerado
+    and AX, 0FFFFh          ; Limita o valor a 16 bits (opcional)
     
-    mov AX, [segundos]       ; Carregar a seed atual
-    test AX, 1           ; Testar se o bit menos significativo ? 1 (?mpar)
-    jz even_case         ; Se zero, ? par, ent?o vai para o caso par
-
-odd_case:
-    ; Caso ?mpar: multiplicar por 3 e adicionar um valor fixo
-    mov BX, [segundos]
-    shl BX,2
-    mul BX                  
-    add AX, 7            ; Adicionar um incremento arbitr?rio (ex.: 7)
-    jmp update_seed      ; Pular para atualiza??o da seed
-
-even_case:
-    mov BX, [seed]
-    shr BX,1
-    mul BX
-    shl AX, 5            ; AX = AX / 2
-    add AX, 5            ; Adicionar um incremento arbitr?rio (ex.: 5)
-
-update_seed:
-    test AX, 1
-    jz evn
-odd:
-    shr AX,1
-    jmp FIM11
-
-evn:
-    shl AX,3
-    
-FIM11:    
-    mov [seed], AX       ; Atualizar a seed
-
+    pop CX
     pop DX
     pop BX
     pop AX
     ret
 random ENDP
+
 
 generate_coordinates PROC
     push AX
@@ -286,7 +280,7 @@ generate_coordinates PROC
     ; Gerar coordenada Y
     call random          ; Gera um n?mero aleat?rio
     mov AX,[seed]
-    mov CX, 200          ; Altura m?xima
+    mov CX, 200         ; Altura m?xima
     xor DX, DX
     div CX               ; AX / CX -> Quociente em AL (0-199)
     mov [alienY], AX     ; Guardar Y em coordY
@@ -301,9 +295,7 @@ change_time PROC
     push SI
     push AX
     ;tempo db Tempo: 60 ,13,10
-    mov AX,[segundos]
-    dec AX
-    mov [segundos],AX
+    dec segundos
     mov SI, OFFSET tempo
     add SI,8
     mov AX,[SI]
@@ -368,7 +360,7 @@ print_string PROC
     ret
 print_string ENDP
 
-print_object proc ;recebe como parametro  Ax -> y , BX -> x , DL -> altura, DH -> comprimento
+print_object proc ;recebe como parametro  AX -> Y , BX -> X , DL -> altura, DH -> comprimento
     push ds
     push cx
     push ax
@@ -581,7 +573,12 @@ INC_BAIXO:
    inc naveY
     jmp ENDI
 INC_ESQUERDA:
+    cmp flag_alien,1
+    je INC_ESQUERDA_ALIEN
     dec nave_inicial2x
+    jmp ENDI
+INC_ESQUERDA_ALIEN:
+    dec alienX
     jmp ENDI
 INC_DIREITA:
     cmp flag_tiro , 1
@@ -623,9 +620,6 @@ colision PROC ; DH -> altura do objeto, DL -> largura do objeto
     xor bx,bx
     xor cx,cx
 
-    cmp tiro_ativado,0
-    je FIM14
-    
     mov bh, DL
     mov bl, DH
 
@@ -708,8 +702,8 @@ move_shot PROC
     
     cmp tiro_ativado,0
     je FIM5
-    ;cmp tiroX,300
-    ;je FIM4
+    cmp tiroX,315
+    je FIM4
     
     mov AX,tiroY
     mov BX,tiroX
@@ -735,13 +729,41 @@ FIM5:
     ret
 move_shot ENDP
 
-print_black PROC     
-    mov SI,OFFSET preto
-    call print_object
+move_alien PROC
+    push AX
+    push BX
+    push DX
+    
+    cmp flag_alien,0
+    je FIM16
+    cmp alienX,0
+    je FIM17
+    
+    mov AX,alienY
+    mov BX,alienX
+    mov DH,16
+    mov DL,10
+    mov flag_move,2
+    call move
+    jmp FIM5
+
+FIM17: 
+   call print_black_alien
+   mov flag_alien, 0
+   
+FIM16:
+    pop DX
+    pop BX
+    pop AX
     ret
-    print_black ENDP
+    move_alien ENDP
 
 print_header PROC
+    push BP
+    push CX
+    push bx
+    PUSH dx
+
     mov BP, OFFSET tempo
     mov CX, tempo_lenght ; tamanho
     mov BL, 0CH ; cor
@@ -755,6 +777,11 @@ print_header PROC
     mov DL, 0 ;coluna
     mov DH, 0 ; linha
     call print_string
+    
+    pop DX
+    pop BX
+    pop CX
+    pop BP
     ret
 print_header ENDP
 
@@ -768,8 +795,8 @@ print_alien PROC
     call generate_coordinates
     mov color,0DH
     mov si, OFFSET alien
-    mov ax,alienX
-    mov bx,alienY
+    mov ax,alienY
+    mov bx,alienX
     mov dl,9
     mov dh,15
     call print_object
@@ -789,12 +816,14 @@ generate_alien PROC
     cmp flag_alien,1
     je FIM12
     ;cmp segundos, 57
-    jge FIM12
+    ;jge FIM12
+    
+    mov DX,1
     
     call random          
     mov AX, [seed]       
-    mov BX, 10          
-    div BX               
+    mov CX, 100          
+    div CX              
     cmp DX, 0            
     jne FIM12
 
@@ -1026,84 +1055,142 @@ FIM8:
     ret
 change_menu ENDP
 
+print_black_nave PROC ;recebe ax -> Y e bx -> X ; pois tem muitas naves
+    push DX
+    push SI
+    
+    mov dl,11
+    mov dh,21
+    mov SI,OFFSET preto
+    call print_object
+    mov flag_alien,0
+    
+    pop SI
+    pop DX
+    ret
+print_black_nave ENDP
+
+print_black_alien PROC
+    push AX
+    push BX
+    push DX
+    push SI
+
+    mov AX,alienY
+    mov BX,alienX
+    mov dl,9
+    mov dh,15
+    mov SI,OFFSET preto
+    call print_object
+    mov flag_alien,0
+    
+    pop SI
+    pop DX
+    pop BX
+    pop AX
+    ret
+print_black_alien ENDP
+
+print_black_shot PROC
+    push AX
+    push BX
+    push DX
+    push SI
+
+    mov AX,tiroY
+    mov BX,tiroX
+    mov dl,3
+    mov dh,9
+    mov SI,OFFSET preto
+    call print_object
+    mov tiro_ativado,0
+    mov flag_tiro,0
+    
+    pop SI
+    pop DX
+    pop BX
+    pop AX
+    ret
+print_black_shot ENDP
+
 print_game PROC
     call video
 ;-------------------------------------------------;  
 ;-------------------1 nave------------------------; 
     mov color,5
-    mov si, OFFSET nave
-    mov ax,25
-    mov bx,5
+    mov ax,15
+    mov bx,nave_secX
     mov dl,11
     mov dh,21
+    mov si, OFFSET nave
     call print_object
 ;-------------------------------------------------;  
 ;-------------------2 nave------------------------; 
     mov color,20H
-    mov si, OFFSET nave
-    mov ax,45
-    mov bx,5
+    mov ax,35
+    mov bx,nave_secX
     mov dl,11
     mov dh,21
+    mov si, OFFSET nave
     call print_object
 ;-------------------------------------------------;  
 ;-------------------3 nave------------------------; 
     mov color,3
-    mov si, OFFSET nave
-    mov ax,65
-    mov bx,5
+    mov ax,55
+    mov bx,nave_secX
     mov dl,11
     mov dh,21
+    mov si, OFFSET nave
     call print_object
 ;-------------------------------------------------;  
 ;-------------------4 nave------------------------;     
     mov color,2
-    mov si, OFFSET nave
-    mov ax,85
-    mov bx,5
+    mov ax,75
+    mov bx,nave_secX
     mov dl,11
     mov dh,21
+    mov si, OFFSET nave
     call print_object
 ;-------------------------------------------------;  
 ;-------------------5 nave------------------------;     
     mov color,0Eh
-    mov si, OFFSET nave
-    mov ax,105
-    mov bx,5
+    mov ax,95
+    mov bx,nave_secX
     mov dl,11
     mov dh,21
+    mov si, OFFSET nave
     call print_object
 ;-------------------------------------------------;  
 ;-------------------6 nave------------------------;     
     mov color,0CH
-    mov si, OFFSET nave
-    mov ax,125
-    mov bx,5
+    mov ax,115
+    mov bx,nave_secX
     mov dl,11
     mov dh,21
+    mov si, OFFSET nave
     call print_object
 ;-------------------------------------------------;  
 ;-------------------7 nave------------------------;
     mov color,4h   
-    mov si, OFFSET nave
-    mov ax,145
-    mov bx,5
+    mov ax,135
+    mov bx,nave_secX
     mov dl,11
     mov dh,21
-    call print_object
+    mov si, OFFSET nave
+    call print_object        
 ;-------------------------------------------------;  
 ;-------------------8 nave------------------------;     
     mov color,0DH
     mov si, OFFSET nave
-    mov ax,165
-    mov bx,5
+    mov ax,155
+    mov bx,nave_secX
     mov dl,11
     mov dh,21
     call print_object
 ;-------------------------------------------------;  
 ;-----------------nave principal------------------;
     mov color,0DH
-    mov si, OFFSET nave
+    mov si,OFFSET nave
     mov ax,95
     mov bx,40
     mov dl,11
@@ -1114,17 +1201,10 @@ print_game PROC
     XOR CX,CX
     mov CX,220
     call print_header
-    
-    
-    mov AX,alienY
-    mov BX,alienX
-    mov dl,9
-    mov dh,15
-    mov SI,OFFSET alien
-    call print_object
+
 ;------------------------LOOP JOGO----------------------------;
 
-loop_key_game:
+loop_key_game: 
     call key_verify
     call update_game
     call generate_alien
@@ -1190,49 +1270,99 @@ update_game PROC ;recebe cx
     push SI
     push DI
     
+    cmp CX,0
+    jnz continue_loop
+    call change_time
+    call print_header
+    mov CX,220
+continue_loop:    
     dec CX
-    ;jz update_time
     xor AX,AX
     call suspend
-    call move_shot; se for testar o Y SI -> alien DI -> tiro 
+    call move_shot; se for testar o Y SI -> alien DI -> tiro
+    call move_alien
     mov SI,tiroX ; se for X SI -> tiro DI -> alien
     mov DI,alienX
     mov dh,3
-    mov dl,3
+    mov dl,5
     call colision
     
-    ;tenho que melhorar
-    ;vai verificar tanto o Y tanto o X
-    ; vai verificar de todas as colis?es de todas as naves 
+    push AX
     
-    cmp AX,0
-    je FIM10
+    mov SI,alienY
+    mov DI,tiroY
+    mov dh,3
+    mov dl,5
+    call colision
+    pop BX
     
-    mov AX,alienY
-    mov BX,alienX
-    mov dl,9
-    mov dh,15
-    mov SI,OFFSET preto
-    call print_object
-    mov flag_alien,0
+    and AX,BX
+    jz colision_nave_sec
     
-    mov AX,tiroY
-    mov BX,tiroX
-    mov dl,3
-    mov dh,9
-    mov SI,OFFSET preto
-    call print_object
-    mov flag_tiro,0
-    
+    call print_black_alien
+    call print_black_shot    
 
-    
-    jmp FIM10
+;-------------------------------------------------------------------------------------------------;    
+;--------------------------TESTAR COLIS?O COM NAVE SECUNDARIA E ALIEN---------------------------;
+colision_nave_sec:
+    mov CX, 15                         
 
-update_time:
-    call change_time
-    mov CX,220
-    call print_header
+loop_colision_nave_sec:
+    add CX,20
+    cmp CX, 175
+    je colision_nave_main 
+    mov SI, nave_secX     
+    mov DI, alienX        
+    mov DH, 10             
+    mov DL, 7            
+    call colision 
     
+    mov BX, AX            
+    mov SI, alienY        
+    mov DI,CX
+    mov DH, 7             
+    mov DL, 10  
+    call colision         
+    and AX, BX            
+    jnz handle_collision  
+          
+    jmp loop_colision_nave_sec  
+    
+handle_collision:
+    call print_black_alien
+    mov AX,CX
+    mov BX, nave_secX      
+    call print_black_nave  
+    jmp loop_colision_nave_sec 
+    
+;-------------------------------------------------------------------------------------------------;
+;-----------------------------------------NAVE PRINCIPAL------------------------------------------;
+   
+colision_nave_main:
+    mov SI,naveX
+    mov DI,alienX
+    mov dh,10
+    mov dl,7
+    call colision
+    
+    push AX
+    
+    mov SI,alienY
+    mov DI,naveY
+    mov dh,10
+    mov dl,7
+    call colision
+    pop BX
+    
+    and AX,BX
+    jz FIM10
+    
+    call print_black_alien
+    mov AX,naveY
+    mov BX,naveX
+    call print_black_nave
+
+      
 FIM10:
     pop DI
     pop SI
@@ -1250,34 +1380,27 @@ inicio:
     ;call print_logo_initial
     ;call change_menu
     call print_game     
-    mov AX,alienX
-    mov BX,alienY
+    
+    ;call print_alien
+    mov si, OFFSET alien
+    mov ax,100
+    mov bx,305
     mov dl,9
     mov dh,15
-    mov SI,OFFSET alien
     call print_object
-    mov AX,tiroX
-    mov BX,tiroY
-    mov dl,3
-    mov dh,8
-    mov SI,OFFSET tiro
-    mov tiro_ativado,1
-    mov flag_tiro , 1
-    call print_object
+    mov flag_alien,1
+    call suspend
+    call suspend
+    
+    mov AX,100
+    mov BX,305
+    mov DH,16
+    mov DL,10
+    mov flag_move,2
+
         
-    mov SI,alienX
-    mov DI,tiroX
-    mov dh,3
-    mov dl,3
-    call colision
-   
     
     
-loop_teste:   
-    
-    call update_game
-    
-    loop loop_teste
     
     mov AH, 4CH
     int 21h
