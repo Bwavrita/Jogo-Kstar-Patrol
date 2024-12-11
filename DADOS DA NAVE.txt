@@ -10,3 +10,34 @@ DADOS DA NAVE:
 8 -> 6CCA - 6CDE
 9 -> 6E0A - 6E1E
 10-> 6F4A - 6F5E
+
+60e8 + 6108
+6408 - 6428
+
+
+posições de impressão das naves
+
+NAVE 1			COLISÃO
+eixo Y:	14		eixo Y:
+eixo X: 5		eixo X:
+NAVE 2			COLISÃO
+eixo Y:	28		eixo Y:
+eixo X: 5		eixo X:
+NAVE 3			COLISÃO
+eixo Y:	3C		eixo Y:
+eixo X: 5		eixo X:
+NAVE 4			COLISÃO
+eixo Y:	50		eixo Y:
+eixo X: 5		eixo X:
+NAVE 5			COLISÃO
+eixo Y:	64		eixo Y:
+eixo X: 5		eixo X:
+NAVE 6			COLISÃO
+eixo Y:	78		eixo Y:
+eixo X: 5		eixo X:
+NAVE 7			COLISÃO
+eixo Y:	8C		eixo Y:
+eixo X: 5		eixo X:
+NAVE 8			COLISÃO
+eixo Y:	AO		eixo Y:
+eixo X: 5		eixo X:

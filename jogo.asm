@@ -67,6 +67,38 @@
 
     setor3_length EQU $ - setor_3
     
+  end_game  db '       _____          __  __ ______ ',13,10
+            db '      / ____|   /\   |  \/  |  ____|',13,10
+            db '     | |  __   /  \  | \  / | |__   ',13,10
+            db '     | | |_ | / /\ \ | |\/| |  __|  ',13,10
+            db '     | |__| |/ ____ \| |  | | |____ ',13,10
+            db '      \_____/_/    \_\_|__|_|______|',13,10
+            db '      / __ \ \    / /  ____|  __ \  ',13,10
+            db '     | |  | \ \  / /| |__  | |__) | ',13,10
+            db '     | |  | |\ \/ / |  __| |  _  /  ',13,10
+            db '     | |__| | \  /  | |____| | \ \  ',13,10
+            db '      \____/   \/   |______|_|  \_\ ',13,10
+            db '',13,10
+  
+   end_game_length EQU $ - end_game
+   
+   win_game     db ' ',13,10
+                db '     _____.___. ',13,10                   
+                db '     \__  |   | ____  __ __ ',13,10       
+                db '      /   |   |/  _ \|  |  \ ',13,10      
+                db '      \____   (  <_> )  |  /  ',13,10     
+                db '      / ______|\____/|____/     ',13,10   
+                db '      \/                        ',13,10   
+                db '      __      __.__         ._._._.',13,10
+                db '     /  \    /  \__| ____   | | | |',13,10
+                db '     \   \/\/   /  |/    \  | | | |',13,10
+                db '      \        /|  |   |  \  \|\|\|',13,10
+                db '       \__/\  / |__|___|  /  ______',13,10
+                db '            \/          \/   \/\/\/',13,10
+                db ' ' ,13,10 
+                                          
+    win_game_length EQU $ - win_game
+    
     nave    db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
             db 0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
             db 0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -155,7 +187,7 @@
      
      nave_inicial1x dw 10
      nave_inicial2x dw 290
-     flag_naves dw 1,1,1,1,1,1,1,1,1,1
+     flag_naves dw 1,1,1,1,1,1,1,1
      
      pontuacao db 'Pontos: 0000' , 13,10
      pontuacao_lenght EQU $ - pontuacao
@@ -172,7 +204,7 @@
      qtd_nave_sector3 db 20
      flag_alien db 0
      seed dw 60
-     segundos dw 60
+     segundos dw 30
      
      color db 1
      color_main db 0dh
@@ -190,12 +222,11 @@ video PROC
     ret
 video ENDP
 
-suspend PROC
+suspend PROC ;RECEBE COMO PARAMETRO CX E DX
     push CX
     push AX
     push DX
-    xor CX,CX
-    mov DX, 0FFFh
+    
     mov AH,86h
     int 15h
     
@@ -254,16 +285,22 @@ dec_points PROC
     mov AX,[SI]
     cmp AL,'1'
     jge its_one
-    jmp FIM
+    inc SI
+    mov AX,[SI]
+    cmp AL,'0'
+    je FIM20
+    dec AX
+    mov [SI],ax
+    jmp FIM20
     
 its_one:
     inc SI
     mov AX,[SI]
-    cmp AX,'0'
+    cmp AL,'0'
     je its_zeroh
     dec AX
     mov [SI],AX
-    jmp FIM
+    jmp FIM20
     
 its_zeroh:  
     add AX,9
@@ -323,11 +360,14 @@ generate_coordinates PROC
     inc AX                ; Incrementa para o intervalo (1?200)
     cmp ax,25
     jle add_thirty
-    cmp ax,199
-    je add_thirty
+    cmp ax,180
+    jle add_thirty
     jmp mov_seed
 add_thirty:
     add ax,30
+    jmp mov_seed
+add_fifty:
+    add ax,50
 mov_seed:
     mov [alienY], AX      ; Salva em alienY
 
@@ -377,6 +417,7 @@ restart_time PROC
     mov AL,'0'
     mov [SI],AX
     dec SI
+    mov AX,[SI]
     mov AL,'6'
     mov [SI],AX
     
@@ -720,6 +761,8 @@ move_ship_initial PROC
     push DI
     push DX
     
+    xor CX,CX
+    mov DX,0FFFFH
     call suspend
     mov AX, 90
     mov BX, nave_inicial2x
@@ -794,7 +837,8 @@ move_alien PROC
     call move
     jmp FIM5
 
-FIM17: 
+FIM17:
+   call inc_points 
    call print_black_alien
    mov flag_alien, 0
    
@@ -956,6 +1000,7 @@ FIM6:
 print_bottons ENDP
 
 print_logo_initial PROC
+    push AX
     push BP
     push CX
     push BX
@@ -1013,14 +1058,13 @@ change_color:
     JMP loop_key
 
 SELECT:
-    xor AX,AX
-    mov AL, [flag_menu]         ; Carrega a flag em AL
 
     pop SI
     pop DX
     pop CX
     pop BX
     pop BP
+    pop AX
     ret
 print_logo_initial ENDP
 
@@ -1045,7 +1089,8 @@ print_sector PROC
     je SECTOR3 
     cmp AL, 4
     je WIN
-    jz DIE
+    cmp AL,0
+    je DIE
     
     
 SECTOR1:
@@ -1055,6 +1100,9 @@ SECTOR1:
     mov DL, 5 ;coluna
     mov DH, 7 ; linha
     call print_string
+    mov CX,0FH
+    xor DX,DX
+    call suspend
     jmp FIM7
     
 SECTOR2:
@@ -1064,6 +1112,9 @@ SECTOR2:
     mov DL, 0 ;coluna
     mov DH, 7 ; linha
     call print_string
+     mov CX,0FH
+    xor DX,DX
+    call suspend
     jmp FIM7
     
 SECTOR3:
@@ -1073,28 +1124,51 @@ SECTOR3:
     mov DL, 0 ;coluna
     mov DH, 7 ; linha
     call print_string
+    mov CX,0FH
+    xor DX,DX
+    call suspend
     jmp FIM7
     
 WIN:
-    mov BP, OFFSET setor_1
-    mov CX, setor1_length ; tamanho
+    mov BP, OFFSET win_game
+    mov CX, win_game_length ; tamanho
     mov BL, 0CH ; cor
-    mov DL, 2 ;coluna
+    mov DL, 0 ;coluna
+    mov DH, 0 ; linha
+    call print_string
+    mov BP, OFFSET pontuacao
+    mov CX, pontuacao_lenght ; tamanho
+    mov BL, 0CH ; cor
+    mov DL, 14 ;coluna
     mov DH, 15 ; linha
     call print_string
+    mov CX,0FH
+    xor DX,DX
+    call suspend
+    mov AH, 4CH
+    int 21h
     jmp FIM7
     
 DIE:
-    mov BP, OFFSET setor_1
-    mov CX, setor1_length ; tamanho
+    mov BP, OFFSET end_game
+    mov CX, end_game_length ; tamanho
     mov BL, 0CH ; cor
-    mov DL, 2 ;coluna
+    mov DL, 0 ;coluna
+    mov DH, 0 ; linha
+    call print_string
+    mov BP, OFFSET pontuacao
+    mov CX, pontuacao_lenght ; tamanho
+    mov BL, 0CH ; cor
+    mov DL, 14 ;coluna
     mov DH, 15 ; linha
     call print_string
+    mov CX,0FH
+    xor DX,DX
+    call suspend
+    mov AH, 4CH
+    int 21h
     
 FIM7:
-    call suspend
-    call suspend
     pop DX
     pop BP
     pop BX
@@ -1104,32 +1178,88 @@ FIM7:
 print_sector ENDP
 
 change_menu PROC
-    xor AX, AX
-    mov AL, [flag_menu]         ; Carrega a flag em AL (0 = Jogar, 1 = Sair)
-
-    cmp AL, 1                   ; Verifica se "sair" foi selecionado
-    je FIM8
-    
+    push AX
+    cmp flag_menu, 1                   ; Verifica se "sair" foi selecionado
+    je FIM8    
 play:
     call video                  ; Reset da tela
     call print_sector
-    
-FIM8:    
+    jmp FIM8
+  
+sair:
+    mov AH, 4CH
+    int 21h
+FIM8:
+    pop ax  
     ret
 change_menu ENDP
+
+
 print_nave_game PROC
-    mov CX,15
+    push AX
+    push BX
+    push CX
+    push DX
+    push SI
+    push DI
+    
+    xor CX,CX
+    xor BX,BX
+    mov BX,1
     mov DI,OFFSET flag_naves
-loop_print_nave_sec: 
+loop_print_nave_sec:
+    cmp CH,8
+    je print_nave_main
     mov AX,[DI]
     cmp AX,0
     je nave_deactivated2
+    mov AL,CH
+    xor CH,CH
     add CX,20
-    cmp CX, 175
+    cmp CX, 160
+    mov CH,Al
     
     
+continue_print:
+    mov color,Bl
+    push BX
+    mov DH,CH
+    xor CH,CH
+    mov ax,CX
+    mov CH,DH
+    mov bx,nave_secX
+    mov dl,11
+    mov dh,21
+    mov si, OFFSET nave
+    call print_object
+    pop BX
+    inc CH
+    add DI,2
+    inc BX
+    jmp loop_print_nave_sec
+    
+nave_deactivated2:
+    inc CH
+    add DI,2
+    inc BX
+    jmp loop_print_nave_sec
 
-nave_deactivated:    
+print_nave_main:
+    mov AL,color_main
+    mov color,aL
+    mov si,OFFSET nave
+    mov ax,naveY
+    mov bx,naveX
+    mov dl,11
+    mov dh,21
+    call print_object
+
+    pop DI
+    pop SI
+    pop DX
+    pop CX
+    pop BX
+    pop AX
     ret
 print_nave_game ENDP
 
@@ -1219,56 +1349,13 @@ find_nave_to_change:
     mov CX,BX
     mov AX,20
     mul BX
-    add AX,15
+    add AX,20
     mov BX,nave_secX
     call print_black_nave
     
-    cmp CX,0
-    je change_main_with_1
-    cmp CX,1
-    je change_main_with_2
-    cmp CX,2
-    je change_main_with_3
-    cmp CX,3
-    je change_main_with_4
-    cmp CX,4
-    je change_main_with_5
-    cmp CX,5
-    je change_main_with_6
-    cmp CX,6
-    je change_main_with_7
-
-change_main_with_8:
-    mov color,0DH
-    mov color_main,0DH
-    jmp print_again
-change_main_with_1:
-    mov color,5
-    mov color_main,5
-    jmp print_again
-change_main_with_2:
-    mov color,20h
-    mov color_main,20h
-    jmp print_again
-change_main_with_3:
-    mov color,3
-    mov color_main,3
-    jmp print_again
-change_main_with_4:
-    mov color,2
-    mov color_main,2
-    jmp print_again
-change_main_with_5:
-    mov color,0EH
-    mov color_main,0eh
-    jmp print_again
-change_main_with_6:
-    mov color,0CH
-    mov color_main,0ch
-    jmp print_again
-change_main_with_7:
-    mov color,4
-    mov color_main,4
+    inc CX
+    mov color,CL
+    mov color_main,Cl
     
 print_again:
     mov si, OFFSET nave
@@ -1316,91 +1403,11 @@ print_game PROC
     push DI
 
     call video
-;-------------------------------------------------;  
-;-------------------1 nave------------------------; 
-    mov color,5
-    mov ax,15
-    mov bx,nave_secX
-    mov dl,11
-    mov dh,21
-    mov si, OFFSET nave
-    call print_object
-;-------------------------------------------------;  
-;-------------------2 nave------------------------; 
-    mov color,20H
-    mov ax,35
-    mov bx,nave_secX
-    mov dl,11
-    mov dh,21
-    mov si, OFFSET nave
-    call print_object
-;-------------------------------------------------;  
-;-------------------3 nave------------------------; 
-    mov color,3
-    mov ax,55
-    mov bx,nave_secX
-    mov dl,11
-    mov dh,21
-    mov si, OFFSET nave
-    call print_object
-;-------------------------------------------------;  
-;-------------------4 nave------------------------;     
-    mov color,2
-    mov ax,75
-    mov bx,nave_secX
-    mov dl,11
-    mov dh,21
-    mov si, OFFSET nave
-    call print_object
-;-------------------------------------------------;  
-;-------------------5 nave------------------------;     
-    mov color,0Eh
-    mov ax,95
-    mov bx,nave_secX
-    mov dl,11
-    mov dh,21
-    mov si, OFFSET nave
-    call print_object
-;-------------------------------------------------;  
-;-------------------6 nave------------------------;     
-    mov color,0CH
-    mov ax,115
-    mov bx,nave_secX
-    mov dl,11
-    mov dh,21
-    mov si, OFFSET nave
-    call print_object
-;-------------------------------------------------;  
-;-------------------7 nave------------------------;
-    mov color,4h   
-    mov ax,135
-    mov bx,nave_secX
-    mov dl,11
-    mov dh,21
-    mov si, OFFSET nave
-    call print_object        
-;-------------------------------------------------;  
-;-------------------8 nave------------------------;     
-    mov color,0DH
-    mov si, OFFSET nave
-    mov ax,155
-    mov bx,nave_secX
-    mov dl,11
-    mov dh,21
-    call print_object
-;-------------------------------------------------;  
-;-----------------nave principal------------------;
-    mov color,0DH
-    mov si,OFFSET nave
-    mov ax,95
-    mov bx,40
-    mov dl,11
-    mov dh,21
-    call print_object
+    call print_nave_game 
 ;-------------------------------------------------; 
 ;----------------print header---------------------;   
     XOR CX,CX
-    mov CX,20
+    mov CX,40
     call print_header
     
 ;------------------------LOOP JOGO----------------------------;
@@ -1408,10 +1415,9 @@ print_game PROC
 loop_key_game: 
     call key_verify
     call update_game
-    call see_flag_naves
     call generate_alien
-    ;cmp segundos,0
-    ;jz FIM_GAME
+    cmp segundos,0
+    jz FIM_GAME
     
     cmp AL ,48H
     je CIMA
@@ -1429,14 +1435,21 @@ loop_key_game:
     je loop_key_game
     jmp loop_key_game
     
-FIM_GAME:    
+FIM_GAME:
+   cmp flag_setor,1
+   je fim_game2
+   add flag_setor,2
+   jmp fim_game3
+fim_game2:   
    inc flag_setor
    call restart_time
-   mov segundos,60
+   mov segundos,30
    mov naveY,90
    mov naveX,45
    jmp FIM18
-   
+
+jmp_loop_game:
+    jmp loop_key_game
 CIMA:
     mov AX, naveY
     mov BX, naveX
@@ -1444,7 +1457,7 @@ CIMA:
     mov DL,11
     mov DH,20
     call move
-    jmp loop_key_game
+    jmp jmp_loop_game
 BAIXO:
     mov AX, naveY
     mov BX, naveX
@@ -1452,10 +1465,10 @@ BAIXO:
     mov DH,20
     mov flag_move, 1
     call move
-    jmp loop_key_game
+    jmp jmp_loop_game
 TIRO:
     cmp tiro_ativado, 1
-    je loop_key_game
+    je jmp_loop_game
     mov AX, naveY
     mov BX , naveX
     add AX , 4
@@ -1470,7 +1483,7 @@ TIRO:
     mov SI, OFFSET tiro
     mov tiro_ativado,1
     call print_object
-    jmp loop_key_game
+    jmp jmp_loop_game
 FIM18:
 
    pop DI
@@ -1493,13 +1506,15 @@ update_game PROC ;recebe cx
     jnz continue_loop
     call change_time
     call print_header
-    mov CX,20
+    mov CX,40
     push CX
     jmp change_cx
 continue_loop:    
     dec CX
     push CX
 change_cx:
+    xor CX,CX
+    mov DX,0FFFH
     call suspend
     call move_shot; se for testar o Y SI -> alien DI -> tiro
     call move_alien
@@ -1528,32 +1543,32 @@ change_cx:
 ;-------------------------------------------------------------------------------------------------;    
 ;--------------------------TESTAR COLIS?O COM NAVE SECUNDARIA E ALIEN---------------------------;
 colision_nave_sec:
-    mov CX, 15                         
+    xor CX,CX                          
     mov SI, OFFSET flag_naves
     xor BX,BX
 loop_colision_nave_sec:
     cmp CH,10
-    je colision_nave_main
+    je jmp_nave_main
     mov AX,[SI]
     cmp AX,0
     je nave_deactivated
     mov AL,CH
     xor CH,CH
     add CX,20
-    cmp CX, 175
+    cmp CX,180
     mov CH,AL
-    je colision_nave_main 
+    je jmp_nave_main 
     mov SI, nave_secX     
     mov DI, alienX        
-    mov DH, 10             
-    mov DL, 10            
+    mov DH, 15             
+    mov DL, 15            
     call colision 
     
     mov BL, AL            
     mov SI, alienY        
     mov DI,CX
-    mov DH, 10            
-    mov DL, 10 
+    mov DH, 15            
+    mov DL, 15 
     call colision         
     and AL, BL            
     jnz handle_collision
@@ -1566,7 +1581,9 @@ loop_colision_nave_sec:
     mov BH,Al
     
           
-    jmp loop_colision_nave_sec  
+    jmp loop_colision_nave_sec
+jmp_nave_main:
+   jmp colision_nave_main      
 nave_deactivated:
     inc CH
     add BH,2
@@ -1590,23 +1607,24 @@ handle_collision:
     mov [SI],AX
     add SI,2
     add BH,2
+    call dec_points
     jmp loop_colision_nave_sec 
-    
+     
 ;-------------------------------------------------------------------------------------------------;
 ;-----------------------------------------NAVE PRINCIPAL------------------------------------------;
    
 colision_nave_main:
     mov SI, naveX     
     mov DI, alienX        
-    mov DH, 7             
-    mov DL, 7            
+    mov DH, 10             
+    mov DL, 10           
     call colision 
     
     mov BX, AX            
     mov SI, alienY        
     mov DI, naveY
-    mov DH, 7            
-    mov DL, 7  
+    mov DH, 10           
+    mov DL, 10 
     call colision         
     and AX, BX       
     jz FIM10
@@ -1633,108 +1651,16 @@ inicio:
     mov DS, AX
     mov es, AX
     call video
-    ;call print_logo_initial
-loop_game:    
-        ;call see_flag_naves
-        ;call print_game
-        ;call change_menu
-        ;call print_game
-    ;loop loop_game
+    call print_logo_initial
+    mov CX,3
+loop_game:  
+    cmp flag_setor,0
+    je FIM22
+    call change_menu
+    call print_game
+    loop loop_game
     
-    ;call print_alien
-    ;-------------------------------------------------;  
-;-------------------1 nave------------------------; 
-    mov color,5
-    mov ax,15
-    mov bx,nave_secX
-    mov dl,11
-    mov dh,21
-    mov si, OFFSET nave
-    call print_object
-;-------------------------------------------------;  
-;-------------------2 nave------------------------; 
-    mov color,20H
-    mov ax,35
-    mov bx,nave_secX
-    mov dl,11
-    mov dh,21
-    mov si, OFFSET nave
-    call print_object
-;-------------------------------------------------;  
-;-------------------3 nave------------------------; 
-    mov color,3
-    mov ax,55
-    mov bx,nave_secX
-    mov dl,11
-    mov dh,21
-    mov si, OFFSET nave
-    call print_object
-;-------------------------------------------------;  
-;-------------------4 nave------------------------;     
-    mov color,2
-    mov ax,75
-    mov bx,nave_secX
-    mov dl,11
-    mov dh,21
-    mov si, OFFSET nave
-    call print_object
-;-------------------------------------------------;  
-;-------------------5 nave------------------------;     
-    mov color,0Eh
-    mov ax,95
-    mov bx,nave_secX
-    mov dl,11
-    mov dh,21
-    mov si, OFFSET nave
-    call print_object
-;-------------------------------------------------;  
-;-------------------6 nave------------------------;     
-    mov color,0CH
-    mov ax,115
-    mov bx,nave_secX
-    mov dl,11
-    mov dh,21
-    mov si, OFFSET nave
-    call print_object
-;-------------------------------------------------;  
-;-------------------7 nave------------------------;
-    mov color,4h   
-    mov ax,135
-    mov bx,nave_secX
-    mov dl,11
-    mov dh,21
-    mov si, OFFSET nave
-    call print_object        
-;-------------------------------------------------;  
-;-------------------8 nave------------------------;     
-    mov color,0DH
-    mov si, OFFSET nave
-    mov ax,155
-    mov bx,nave_secX
-    mov dl,11
-    mov dh,21
-    call print_object
-;-------------------------------------------------;  
-;-----------------nave principal------------------;
-    mov color,0DH
-    mov si,OFFSET nave
-    mov ax,95
-    mov bx,40
-    mov dl,11
-    mov dh,21
-    call print_object
-    
-    call turn_nave_main
-    call turn_nave_main
-    call turn_nave_main
-    call turn_nave_main
-    call turn_nave_main
-    call turn_nave_main
-    call turn_nave_main
-    call turn_nave_main
-    call turn_nave_main
-    
-
+FIM22:
     mov AH, 4CH
     int 21h
     
