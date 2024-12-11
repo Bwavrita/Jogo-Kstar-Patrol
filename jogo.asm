@@ -322,22 +322,20 @@ random PROC
     push DX
     push CX
 
-    ; Pegar o tempo do sistema para incrementar a seed
-    mov AH, 2Ch             ; Servi?o para pegar o tempo atual
-    int 21h                 ; Executa a interrup??o
-    xor AX, DX              ; Mistura os segundos e os ticks
-    add [seed], AX          ; Incrementa a seed com um valor mais din?mico
-
-    ; Gerador Linear Congruente: new_seed = (A * seed + C) mod M
-    mov AX, [seed]
-    mov BX, 22695        ; Constante A (grande n?mero primo)
-    mul BX                  ; AX = AX * A
-    add AX, 1               ; Constante C (incremento)
-    mov [seed], AX          ; Atualiza a seed
-
-    ; Retorna o valor gerado
-    and AX, 0FFFFh          ; Limita o valor a 16 bits (opcional)
     
+    mov AH, 2Ch             
+    int 21h                 
+    xor AX, DX              
+    add [seed], AX          
+    
+        mov AX, [seed]
+    mov BX, 22695       
+    mul BX                  
+    add AX, 1               
+    mov [seed], AX          
+
+    
+    and AX, 0FFFFh         
     pop CX
     pop DX
     pop BX
