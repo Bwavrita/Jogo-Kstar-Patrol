@@ -806,7 +806,7 @@ move_ship_initial PROC
     xor CX,CX
     mov DX,0FFFFH
     call suspend
-    mov AX, 90
+    mov AX, 120
     mov BX, nave_inicial2x
     mov DH,21
     mov DL,11
@@ -1072,7 +1072,7 @@ print_logo_initial PROC
     
     mov color,7
     mov si, OFFSET nave_contrario
-    mov ax,90
+    mov ax,120
     mov bx,290
     mov dl,11
     mov dh,21
@@ -1177,13 +1177,13 @@ SECTOR3:
 WIN:
     mov BP, OFFSET win_game
     mov CX, win_game_length ; tamanho
-    mov BL, 0CH ; cor
+    mov BL, 02H ; cor
     mov DL, 0 ;coluna
     mov DH, 0 ; linha
     call print_string
     mov BP, OFFSET pontuacao
     mov CX, pontuacao_lenght ; tamanho
-    mov BL, 0CH ; cor
+    mov BL, 0FH ; cor
     mov DL, 14 ;coluna
     mov DH, 15 ; linha
     call print_string
@@ -1729,7 +1729,7 @@ loop_game:
     call change_menu
     call print_game
     loop loop_game
-    
+   
     
     
 FIM22:
