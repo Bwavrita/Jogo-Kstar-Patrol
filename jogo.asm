@@ -204,7 +204,7 @@
      qtd_nave_sector3 db 20
      flag_alien db 0
      seed dw 60
-     segundos dw 30
+     segundos dw 60
      
      color db 1
      color_main db 0dh
@@ -351,22 +351,12 @@ generate_coordinates PROC
 
     call random           ; Gera um n?mero aleat?rio
     mov AX, [seed]        ; Carrega o valor da seed gerada
-    mov BX, 200           ; Define o limite superior
+    mov BX, 141           ; Define o intervalo (160 - 20 + 1)
     xor DX, DX            ; Limpa DX para a divis?o
     div BX                ; AX = AX / BX, DX = resto da divis?o
-    mov AX, DX            ; Pega o resto (0?199)
-    inc AX                ; Incrementa para o intervalo (1?200)
-    cmp ax,25
-    jle add_thirty
-    cmp ax,180
-    jle add_thirty
-    jmp mov_seed
-add_thirty:
-    add ax,30
-    jmp mov_seed
-add_fifty:
-    add ax,50
-mov_seed:
+    mov AX, DX            ; Pega o resto (0?140)
+    add AX, 20            ; Ajusta para o intervalo (20?160)
+
     mov [alienY], AX      ; Salva em alienY
 
     pop CX
@@ -374,6 +364,7 @@ mov_seed:
     pop AX
     ret
 generate_coordinates ENDP
+
 
 
 change_time PROC
@@ -496,6 +487,58 @@ print_object proc ;recebe como parametro  AX -> Y , BX -> X , DL -> altura, DH -
         pop ds
         ret
 print_object endp
+
+print_chao proc ;recebe como parametro  AX -> Y , BX -> X , DL -> altura, DH -> comprimento
+    push ds
+    push cx
+    push ax
+    push di
+    push es
+    
+    CLD
+    mov cx, 320
+    mul cx 
+    mov di,ax  
+    add di, bx
+    
+    mov ax, 0A000h
+    mov es, ax
+    
+    xor bx,bx
+    xor cx,cx
+    mov bx, 19
+    loop_draw_object2:
+    mov cx,320
+        loop_change_color2:
+             mov al,[si]
+             cmp al,0
+             je disabled2
+             cmp al,1
+             je ehMarrom
+             mov al,color
+             add al,02h
+             mov [si],al
+             jmp disabled2
+         ehMarrom:
+             mov al,color
+             mov [si],al
+         disabled2:
+             movsb
+             dec cx
+             jnz loop_change_color2
+        add si,100
+        dec bx
+        jz FIM23
+        jmp loop_draw_object2
+    
+    FIM23:
+        pop es
+        pop di
+        pop ax
+        pop cx
+        pop ds
+        ret
+        print_chao endp
 
 move PROC;recebe como parametro  Ax -> y , BX -> x , DL -> altura, DH -> comprimento
     push AX
@@ -1122,9 +1165,9 @@ SECTOR3:
     mov DL, 0 ;coluna
     mov DH, 7 ; linha
     call print_string
-    mov CX,0FH
-    xor DX,DX
-    call suspend
+    ;mov CX,0FH
+    ;xor DX,DX
+    ;call suspend
     jmp FIM7
     
 WIN:
@@ -1238,6 +1281,11 @@ continue_print:
     
 nave_deactivated2:
     inc CH
+    mov AL,CH
+    xor CH,CH
+    add CX,20
+    cmp CX, 160
+    mov CH,Al
     add DI,2
     inc BX
     jmp loop_print_nave_sec
@@ -1401,12 +1449,21 @@ print_game PROC
     push DI
 
     call video
+;----------------print naves---------------------;     
     call print_nave_game 
+;-------------------------------------------------;
+;----------------print chao-----------------------;
+    mov color,4
+    mov SI,OFFSET cenario
+    mov ax,181
+    mov bx,0
+    call print_chao
 ;-------------------------------------------------; 
 ;----------------print header---------------------;   
     XOR CX,CX
     mov CX,40
     call print_header
+
     
 ;------------------------LOOP JOGO----------------------------;
 
@@ -1434,21 +1491,27 @@ loop_key_game:
     jmp loop_key_game
     
 FIM_GAME:
-   cmp flag_setor,1
-   je fim_game2
-   add flag_setor,2
-   jmp fim_game3
+    ;   cmp flag_setor,1
+    ;je fim_game2
+    ;add flag_setor,2
+    ;jmp fim_game3
 fim_game2:   
    inc flag_setor
+fim_game3:
    call restart_time
-   mov segundos,30
+   mov segundos,60
    mov naveY,90
    mov naveX,45
+   mov flag_alien,0
+   mov tiro_ativado, 0
+   mov flag_tiro, 0
    jmp FIM18
 
 jmp_loop_game:
     jmp loop_key_game
 CIMA:
+    cmp naveY,20
+    je jmp_loop_game
     mov AX, naveY
     mov BX, naveX
     mov flag_move, 0
@@ -1457,6 +1520,8 @@ CIMA:
     call move
     jmp jmp_loop_game
 BAIXO:
+    cmp naveY,160
+    je jmp_loop_game
     mov AX, naveY
     mov BX, naveX
     mov DL,11
@@ -1631,6 +1696,7 @@ colision_nave_main:
     mov AX,naveY
     mov BX,naveX
     call print_black_nave
+    call dec_points
     call turn_nave_main
 
       
@@ -1657,6 +1723,8 @@ loop_game:
     call change_menu
     call print_game
     loop loop_game
+    
+    
     
 FIM22:
     mov AH, 4CH
